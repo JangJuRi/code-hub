@@ -1,0 +1,142 @@
+:root {
+    --primary-color: #36adff; /* 강조색 */
+    --primary-hover: #0088d1; /* 강조색 (호버 시) */
+    --background-color: #000000; /* 배경색 */
+    --text-color: white; /* 기본 글자색 */
+    --card-text-color: #ddd; /* 카드 설명 색상 */
+    --search-bg-color: #1e1e1e; /* 검색 바 배경 */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90vh; /* 화면 전체 높이 */
+    text-align: center;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.search-bar {
+    width: 80%;
+    max-width: 900px;
+    padding: 18px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 50px;
+    border: none;
+    outline: none;
+    background-color: var(--search-bg-color);
+    color: var(--text-color);
+    box-shadow: 0 0 20px rgba(var(--primary-color), 0.5);
+    transition: all 0.2s ease-in-out;
+}
+
+.search-bar:focus {
+    box-shadow: 0 0 25px rgba(var(--primary-color), 0.8);
+}
+
+.search-bar::placeholder {
+    color: #bbb;
+}
+
+.tag-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tag {
+    font-size: 1.2rem;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.tag:hover {
+    background-color: var(--primary-hover);
+}
+
+.card-text {
+    color: var(--card-text-color);
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 최대 2줄 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.write-btn {
+    background-color: var(--primary-color);
+    border: none;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: all 0.2s ease-in-out;
+}
+
+.write-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.logo {
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 3.5rem;
+}
+
+.register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgb(255, 255, 255);
+    text-align: center;
+    color: white;
+}
+
+.register-form .form-control {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+}
+
+.register-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.language-selector {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+    width: 200px;
+}
