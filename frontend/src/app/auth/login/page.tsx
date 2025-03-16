@@ -1,8 +1,12 @@
 "use client";
 
 import {ChangeEvent, FormEvent, useState} from "react";
+import customFetch from "@/api/customFetch";
+import {useRouter} from "next/navigation";
 
 export default function Register() {
+    const router = useRouter();
+
     const [form, setForm] = useState({
         accountId: "",
         password: "",
@@ -12,8 +16,25 @@ export default function Register() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("accountId", form.accountId);
+        formData.append("username", form.accountId);
+        formData.append("password", form.password);
+
+        const result = await customFetch('/auth/login', {
+            method: 'POST',
+            body: formData
+        })
+
+        if (result.success) {
+            localStorage.setItem("token", result.data);
+            router.push("/");
+        } else {
+            alert("계정 정보가 존재하지 않습니다.")
+        }
     };
 
     return (
@@ -25,7 +46,7 @@ export default function Register() {
                     <input
                         type="text"
                         className="form-control"
-                        name="username"
+                        name="accountId"
                         value={form.accountId}
                         onChange={handleChange}
                         required
