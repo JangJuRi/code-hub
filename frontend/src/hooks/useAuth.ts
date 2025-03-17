@@ -1,43 +1,31 @@
-"use client"; // 클라이언트 사이드에서만 실행되도록 지정
-
-import {useEffect, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import customFetch from "@/api/customFetch";
-
-// 인증 상태를 나타내는 타입
-interface AuthResponse {
-    authenticated: boolean;
-    username?: string;
-}
+import {AuthContext} from "@/context/AuthContext";
+import {useContext, useEffect} from "react";
 
 const useAuth = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
     const pathname = usePathname(); // 현재 경로 가져오기
     const router = useRouter();
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
 
     // 인증 체크를 제외할 페이지 목록
     const excludedPaths = ["/", "/auth/signup", "/auth/login"];
 
     useEffect(() => {
-        if (excludedPaths.includes(pathname)) {
-            return; // 제외된 페이지에서는 실행 안 함
-        }
+        if (!excludedPaths.includes(pathname) && !context.authenticated) {
+            context.authCheck(); // 로그인 정보 체크
 
-        const authCheck = async () => {
-            return await customFetch('/auth/check', {
-                method: 'GET'
-            });
-        };
-
-        authCheck().then(response => {
-            if (response.data === 'anonymousUser') {
+            if (!context.username || context.username === 'anonymousUser') {
                 alert("로그인이 필요합니다.")
                 router.push("/auth/login");
             }
-        });
-    }); // 페이지 이동 시마다 실행
+        }
+    }, [pathname, context.authenticated, router]);
 
-    return { isAuthenticated };
+    return context;
 };
 
 export default useAuth;
