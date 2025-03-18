@@ -1,16 +1,37 @@
 "use client";
 
-import {ChangeEvent, FormEvent, useState} from "react";
+import {ChangeEvent, FormEvent, use, useState} from "react";
 import Editor from "@monaco-editor/react";
+import customFetch from "@/api/customFetch";
+import {useRouter} from "next/navigation";
 
-export default function Write() {
+export default function Write({ params }: { params: Promise<{ id: string }> }) {
+    const router = useRouter();
+    const { id } = use(params);
+
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [code, setCode] = useState("");
     const [language, setLanguage] = useState("java");  // 언어 상태 관리
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+
+        const api = (id === 'new' ? '/user/util-post/add' : '/user/util-post/modify');
+        const result= await customFetch(api, {
+            method: 'POST',
+            body: {
+                title: title,
+                description: description,
+                languageType: language,
+                content: code
+            }
+        })
+
+        if (result.success) {
+            alert("저장되었습니다.");
+            router.push("/");
+        }
     };
 
     const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -31,6 +52,7 @@ export default function Write() {
                                 >
                                     <option value="java">Java</option>
                                     <option value="javascript">JavaScript</option>
+                                    <option value="c">C</option>
                                     <option value="python">Python</option>
                                     <option value="html">HTML</option>
                                     <option value="css">CSS</option>

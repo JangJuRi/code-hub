@@ -1,7 +1,7 @@
 package com.jr.utilHub.api.auth.service;
 
 import com.jr.utilHub.api.security.CustomUserDetails;
-import com.jr.utilHub.api.user.repository.UserRepository;
+import com.jr.utilHub.api.user.user.repository.UserRepository;
 import com.jr.utilHub.entity.User;
 import com.jr.utilHub.util.ApiResponse;
 import com.jr.utilHub.util.CommonUtil;

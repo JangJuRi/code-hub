@@ -67,6 +67,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (result.data === 'anonymousUser') {
             authSetting(false, '');
+
+            alert("로그인이 필요합니다.")
+            router.push("/auth/login");
         }
     }
 

@@ -17,11 +17,6 @@ const useAuth = () => {
     useEffect(() => {
         if (!excludedPaths.includes(pathname) && !context.authenticated) {
             context.authCheck(); // 로그인 정보 체크
-
-            if (!context.username || context.username === 'anonymousUser') {
-                alert("로그인이 필요합니다.")
-                router.push("/auth/login");
-            }
         }
     }, [pathname, context.authenticated, router]);
 

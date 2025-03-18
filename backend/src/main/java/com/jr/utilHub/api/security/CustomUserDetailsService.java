@@ -1,6 +1,6 @@
 package com.jr.utilHub.api.security;
 
-import com.jr.utilHub.api.user.repository.UserRepository;
+import com.jr.utilHub.api.user.user.repository.UserRepository;
 import com.jr.utilHub.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

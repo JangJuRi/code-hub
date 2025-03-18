@@ -1,4 +1,4 @@
-package com.jr.utilHub.api.user.repository;
+package com.jr.utilHub.api.user.user.repository;
 
 import com.jr.utilHub.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

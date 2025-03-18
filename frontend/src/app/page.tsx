@@ -16,7 +16,7 @@ const Home = () => {
 
             <SearchBar />
             <div className="d-flex justify-content-end w-100 px-4">
-                <Link href="/user/util/write">
+                <Link href="/user/util/write/new">
                     <button className="btn btn-primary write-btn">글쓰기</button>
                 </Link>
             </div>
