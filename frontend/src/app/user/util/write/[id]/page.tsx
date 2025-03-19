@@ -1,6 +1,6 @@
 "use client";
 
-import {ChangeEvent, FormEvent, use, useState} from "react";
+import {ChangeEvent, FormEvent, use, useEffect, useState} from "react";
 import Editor from "@monaco-editor/react";
 import customFetch from "@/api/customFetch";
 import {useRouter} from "next/navigation";
@@ -13,6 +13,27 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     const [description, setDescription] = useState("");
     const [code, setCode] = useState("");
     const [language, setLanguage] = useState("java");  // 언어 상태 관리
+
+    useEffect(() => {
+        if (id !== 'new') {
+            loadDetail();
+        }
+    }, []);
+
+    const loadDetail = async () => {
+        const result= await customFetch(`/user/util-post/detail/load/${id}`, {
+            method: 'GET'
+        })
+
+        if (result.success) {
+            const data = result.data;
+
+            setTitle(data.title);
+            setDescription(data.description);
+            setCode(data.content);
+            setLanguage(data.languageType);
+        }
+    }
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();

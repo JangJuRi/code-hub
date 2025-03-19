@@ -12,6 +12,10 @@ body {
     color: var(--text-color);
 }
 
+a {
+    text-decoration: auto;
+}
+
 .home-container {
     display: flex;
     flex-direction: column;
@@ -71,6 +75,16 @@ body {
 
 .tag:hover {
     background-color: var(--primary-hover);
+}
+
+.card {
+    min-width: 252px;
+    min-height: 310px;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
 }
 
 .card-text {
