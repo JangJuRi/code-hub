@@ -25,6 +25,21 @@ public class UtilPostService {
         return ApiResponse.ok(null);
     }
 
+    public ApiResponse modifyUtilPost(UtilPost utilPost) {
+        UtilPost post = utilPostRepository.findById(utilPost.getId()).orElse(null);
+
+        if (post != null) {
+            post.setTitle(utilPost.getTitle());
+            post.setDescription(utilPost.getDescription());
+            post.setContent(utilPost.getContent());
+            post.setLanguageType(utilPost.getLanguageType());
+
+            utilPostRepository.save(post);
+        }
+
+        return ApiResponse.ok(null);
+    }
+
     public ApiResponse loadUtilPostList() {
         List<UtilPostListProjection> utilPostList = utilPostRepository.findUtilPostList();
         return ApiResponse.ok(utilPostList);

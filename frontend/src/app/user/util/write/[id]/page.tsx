@@ -42,9 +42,10 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
         const result= await customFetch(api, {
             method: 'POST',
             body: {
+                id: id !== 'new' ? id : '',
                 title: title,
                 description: description,
-                languageType: language,
+                languageType: { languageType: language },
                 content: code
             }
         })
@@ -75,8 +76,6 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                     <option value="javascript">JavaScript</option>
                                     <option value="c">C</option>
                                     <option value="python">Python</option>
-                                    <option value="html">HTML</option>
-                                    <option value="css">CSS</option>
                                 </select>
                             </div>
                         </div>
@@ -126,7 +125,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                         </div>
                     </div>
                     <button type="submit" className="btn btn-primary">
-                        등록
+                        저장
                     </button>
                 </form>
             </div>

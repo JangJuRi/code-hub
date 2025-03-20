@@ -7,6 +7,12 @@ public interface UtilPostListProjection {
     String getTitle();
     String getDescription();
 
+    @Value("#{target.languageType.languageType}")
+    String getLanguageType();
+
+    @Value("#{target.languageType.color}")
+    String getColor();
+
     @Value("#{target.user.userName}")
     String getUserName();
 }

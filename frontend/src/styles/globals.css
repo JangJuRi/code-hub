@@ -80,21 +80,29 @@ a {
 .card {
     min-width: 252px;
     min-height: 310px;
+
+    .card-img-top {
+        height: 200px;
+        color: white;
+        font-weight: bold;
+        font-size: 3rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .card-text {
+        color: var(--card-text-color);
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* 최대 2줄 */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
-.card-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-}
-
-.card-text {
-    color: var(--card-text-color);
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* 최대 2줄 */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 .write-btn {
     background-color: var(--primary-color);

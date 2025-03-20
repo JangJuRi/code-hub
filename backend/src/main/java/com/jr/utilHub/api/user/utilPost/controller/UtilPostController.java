@@ -16,6 +16,11 @@ public class UtilPostController {
         return ResponseEntity.ok(utilPostService.addUtilPost(utilPost));
     }
 
+    @PostMapping("/user/util-post/modify")
+    public ResponseEntity<?> modifyUtilPost(@RequestBody UtilPost utilPost) {
+        return ResponseEntity.ok(utilPostService.modifyUtilPost(utilPost));
+    }
+
     @GetMapping("/user/util-post/list/load")
     public ResponseEntity<?> loadUtilPostList() {
         return ResponseEntity.ok(utilPostService.loadUtilPostList());
