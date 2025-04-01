@@ -1,5 +1,6 @@
 package com.jr.utilHub.api.user.utilPost.controller;
 
+import com.jr.utilHub.api.user.utilPost.dto.UtilPostSearchFilterDto;
 import com.jr.utilHub.api.user.utilPost.service.UtilPostService;
 import com.jr.utilHub.entity.UtilPost;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,17 @@ public class UtilPostController {
     }
 
     @GetMapping("/user/util-post/list/load")
-    public ResponseEntity<?> loadUtilPostList() {
-        return ResponseEntity.ok(utilPostService.loadUtilPostList());
+    public ResponseEntity<?> loadUtilPostList(UtilPostSearchFilterDto searchFilter) {
+        return ResponseEntity.ok(utilPostService.loadUtilPostList(searchFilter));
     }
 
     @GetMapping("/user/util-post/detail/load/{utilPostId}")
     public ResponseEntity<?> loadUtilPostDetail(@PathVariable("utilPostId") Long utilPostId) {
         return ResponseEntity.ok(utilPostService.loadUtilPostDetail(utilPostId));
+    }
+
+    @GetMapping("/user/util-post/language-type/list/load")
+    public ResponseEntity<?> loadUtilPostLanguageTypeList() {
+        return ResponseEntity.ok(utilPostService.loadUtilPostLanguageTypeList());
     }
 }

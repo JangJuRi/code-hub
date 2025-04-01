@@ -71,6 +71,11 @@ a {
     color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    text-shadow:
+        -0.5px -0.5px 0 black,
+        0.5px -0.5px 0 black,
+        -0.5px 0.5px 0 black,
+        0.5px 0.5px 0 black;
 }
 
 .tag:hover {
