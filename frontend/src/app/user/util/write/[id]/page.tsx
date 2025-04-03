@@ -107,7 +107,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
 
         if (result.success) {
             alert("저장되었습니다.");
-            await loadCodeDetail();
+            router.push(`/user/util/detail/${id}`);
         }
     }
 

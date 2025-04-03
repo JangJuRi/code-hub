@@ -27,7 +27,7 @@ const SearchBar = ({filter, updateFilter}: SearchBarProps) => {
         <div className="search-container">
             <input
                 type="text"
-                className="form-control search-bar"
+                className="form-control search-bar fs-5"
                 placeholder="검색어를 입력하세요..."
                 onKeyUp={(e) => {
                     if (e.key === "Enter") {
@@ -43,7 +43,7 @@ const SearchBar = ({filter, updateFilter}: SearchBarProps) => {
                 {list.map((tag, index) => (
                     <span key={index} className="tag" style={{background: tag.color}}
                           onClick={(e) => updateFilter('languageType', tag.languageType)}>
-                        #{tag.languageType}
+                        {tag.languageType}
                     </span>
                 ))}
             </div>

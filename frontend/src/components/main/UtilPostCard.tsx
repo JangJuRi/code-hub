@@ -10,7 +10,7 @@ const UtilPostCard = ({ data }: { data:{
                     <div className="card-img-top rounded-top d-flex justify-content-center align-items-center"
                          style={{
                              background: data.color
-                                 ? `linear-gradient(to right, ${data.color.split(',').map((color, i, arr) =>
+                                 ? `conic-gradient(${data.color.split(',').map((color, i, arr) =>
                                      `${color} ${(i / arr.length) * 100}% ${(i + 1) / arr.length * 100}%`
                                  ).join(', ')})`
                                  : 'white'

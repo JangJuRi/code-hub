@@ -24,8 +24,9 @@ public interface UtilPostMasterRepository extends JpaRepository<UtilPostMaster, 
            "  left join TABLE_UTIL_POST_DETAIL upd on upm.id = upd.util_post_master_id" +
            "  left join TABLE_UTIL_POST_LANGUAGE_TYPE uplt on uplt.id = upd.language_type_id" +
            " where (:#{#searchFilter.text} = '' or upm.title like %:#{#searchFilter.text}%) " +
-           "   and (:#{#searchFilter.languageType} = '' or uplt.language_type = :#{#searchFilter.languageType})" +
-           " group by upm.id, u.user_name"
+           " group by upm.id, u.user_name" +
+           " having (:#{#searchFilter.languageType} = ''" +
+           "     or SUM(case when uplt.language_type = :#{#searchFilter.languageType} then 1 else 0 end) > 0) "
             , nativeQuery = true
     )
     List<UtilPostListDto> findUtilPostList(UtilPostSearchFilterDto searchFilter);
