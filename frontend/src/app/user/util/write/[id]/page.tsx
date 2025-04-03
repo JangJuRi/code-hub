@@ -9,19 +9,29 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     const router = useRouter();
     const { id } = use(params);
 
+    const [detailId, setDetailId] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [code, setCode] = useState("");
+    const [languageList, setLanguageList] = useState([]);
     const [language, setLanguage] = useState("java");  // 언어 상태 관리
 
     useEffect(() => {
+        loadTagList();
+
         if (id !== 'new') {
-            loadDetail();
+            loadMasterDetail();
         }
     }, []);
 
-    const loadDetail = async () => {
-        const result= await customFetch(`/user/util-post/detail/load/${id}`, {
+    useEffect(() => {
+        if (id !== 'new') {
+            loadCodeDetail();
+        }
+    }, [language]);
+
+    const loadMasterDetail = async () => {
+        const result= await customFetch(`/user/util-post/master-detail/load/${id}`, {
             method: 'GET'
         })
 
@@ -30,8 +40,29 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
 
             setTitle(data.title);
             setDescription(data.description);
-            setCode(data.content);
-            setLanguage(data.languageType);
+        }
+    }
+
+    const loadCodeDetail = async () => {
+        const result= await customFetch(`/user/util-post/code-detail/load/${id}/${language}`, {
+            method: 'GET'
+        })
+
+        if (result.success) {
+            const data = result.data;
+
+            setDetailId(data ? data.id : '');
+            setCode(data ? data.content : '');
+        }
+    }
+
+    const loadTagList = async () => {
+        const result = await customFetch('/user/util-post/language-type/list/load', {
+            method: 'GET'
+        })
+
+        if (result.success) {
+            setLanguageList(result.data);
         }
     }
 
@@ -45,39 +76,72 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                 id: id !== 'new' ? id : '',
                 title: title,
                 description: description,
-                languageType: { languageType: language },
+                languageType: language,
                 content: code
             }
         })
 
         if (result.success) {
             alert("저장되었습니다.");
-            router.push("/");
+
+            if (id === 'new') {
+                router.push(`/user/util/write/${result.data}`);
+            }
         }
     };
 
-    const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        setLanguage(e.target.value);
+    const handleLanguageChange = (language: string) => {
+        setLanguage(language);
     };
+
+    const saveCode = async () => {
+        const result= await customFetch('/user/util-post/code/merge', {
+            method: 'POST',
+            body: {
+                id: detailId,
+                masterId: id,
+                languageType: language,
+                content: code
+            }
+        })
+
+        if (result.success) {
+            alert("저장되었습니다.");
+            await loadCodeDetail();
+        }
+    }
+
+    const removeCode = async () => {
+        const result= await customFetch('/user/util-post/code/remove', {
+            method: 'POST',
+            body: {
+                id: detailId
+            }
+        })
+
+        if (result.success) {
+            alert("삭제되었습니다.");
+            router.push(`/user/util/detail/${id}`);
+        }
+    }
 
     return (
         <div className="container py-5">
             <div className="card bg-dark text-light p-4" style={{ minHeight: "600px", display: "flex", flexDirection: "column" }}>
                 <form onSubmit={handleSubmit} className="d-flex flex-column flex-grow-1">
                     <div className="row flex-grow-1">
-                        <div>
-                            <div className="d-flex justify-content-end">
-                                <select
-                                    className="form-select mb-3 language-selector"
-                                    value={language}
-                                    onChange={handleLanguageChange}
-                                >
-                                    <option value="java">Java</option>
-                                    <option value="javascript">JavaScript</option>
-                                    <option value="c">C</option>
-                                    <option value="python">Python</option>
-                                </select>
-                            </div>
+                        <div style={{ minHeight: "80px" }}
+                             className={`d-flex flex-wrap gap-2 justify-content-end ${id === 'new' ? 'is-dim' : ''}`}>
+                            {languageList.map((languageValue) => (
+                                <button type="button" key={languageValue.languageType}
+                                        value={language}
+                                        onClick={() => handleLanguageChange(languageValue.languageType)}
+                                        className={`language-button btn rounded-circle d-flex align-items-center justify-content-center
+                                                    ${language === languageValue.languageType ? 'is-active' : ''}`}
+                                        style={{ background: languageValue.color }}>
+                                    {languageValue.languageType}
+                                </button>
+                            ))}
                         </div>
 
                         {/* 왼쪽 입력 필드 (30%) */}
@@ -103,12 +167,23 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                     required
                                 ></textarea>
                             </div>
+                            <button type="submit" className="btn btn-primary">
+                                저장
+                            </button>
                         </div>
 
                         {/* 오른쪽 Monaco Editor (70%) */}
-                        <div className="col-md-8">
+                        <div className={`col-md-8 position-relative ${id === 'new' ? 'is-dim' : ''}`}>
+                            {/* 저장 후 입력 가능 메시지 */}
+                            {id === "new" && (
+                                <div className="dim-text">
+                                    왼쪽 정보 저장 후 입력 가능합니다
+                                </div>
+                            )}
+
                             <Editor
-                                height="430px"
+                                key={language}
+                                height="420px"
                                 language={language}
                                 theme="vs-dark"
                                 value={code}
@@ -122,11 +197,18 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                     autoIndent: "full", // 자동 들여쓰기
                                 }}
                             />
+                            <div className="d-flex justify-content-end mt-2">
+                                <button type='button' className="btn btn-sm btn-primary me-2"
+                                        onClick={() => saveCode()}>
+                                    <i className="bi bi-check-lg me-1"></i> 코드 저장
+                                </button>
+                                <button type='button' className="btn btn-sm btn-danger"
+                                        onClick={() => removeCode()}>
+                                    <i className="bi bi-x-lg me-1"></i> 코드삭제
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary">
-                        저장
-                    </button>
                 </form>
             </div>
         </div>

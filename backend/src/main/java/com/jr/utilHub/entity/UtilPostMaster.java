@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "TABLE_UTIL_POST")
-public class UtilPost extends BaseEntity {
+@Table(name = "TABLE_UTIL_POST_MASTER")
+public class UtilPostMaster extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,13 +23,9 @@ public class UtilPost extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "utilPostMaster")
+    private List<UtilPostDetail> utilPostDetail;
+
     private String title;
     private String description;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "language_type")
-    private UtilPostLanguageType languageType;
-
-    @Column(columnDefinition = "TEXT")
-    private String content;
 }

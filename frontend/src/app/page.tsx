@@ -27,6 +27,7 @@ const Home = () => {
         })
 
         if (result.success) {
+            console.log(result.data)
             setList(result.data);
         }
     }
@@ -48,7 +49,7 @@ const Home = () => {
                     <button className="btn btn-primary write-btn">글쓰기</button>
                 </Link>
             </div>
-            <div className="row g-4 mt-4">
+            <div className="row row-cols-1 row-cols-md-4 g-4 w-100">
                 {list.map((data, index) => (
                     <UtilPostCard key={index} data={data} />
                 ))}

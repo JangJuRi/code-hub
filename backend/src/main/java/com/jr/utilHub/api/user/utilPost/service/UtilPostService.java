@@ -1,56 +1,83 @@
 package com.jr.utilHub.api.user.utilPost.service;
 
 import com.jr.utilHub.api.user.user.service.UserService;
-import com.jr.utilHub.api.user.utilPost.dto.UtilPostSearchFilterDto;
-import com.jr.utilHub.api.user.utilPost.projection.UtilPostDetailProjection;
-import com.jr.utilHub.api.user.utilPost.projection.UtilPostListProjection;
+import com.jr.utilHub.api.user.utilPost.dto.*;
+import com.jr.utilHub.api.user.utilPost.repository.UtilPostDetailRepository;
 import com.jr.utilHub.api.user.utilPost.repository.UtilPostLanguageTypeRepository;
-import com.jr.utilHub.api.user.utilPost.repository.UtilPostRepository;
-import com.jr.utilHub.entity.UtilPost;
+import com.jr.utilHub.api.user.utilPost.repository.UtilPostMasterRepository;
+import com.jr.utilHub.entity.UtilPostDetail;
+import com.jr.utilHub.entity.UtilPostMaster;
 import com.jr.utilHub.entity.UtilPostLanguageType;
 import com.jr.utilHub.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UtilPostService {
-    private final UtilPostRepository utilPostRepository;
+    private final UtilPostMasterRepository utilPostMasterRepository;
+    private final UtilPostDetailRepository utilPostDetailRepository;
     private final UtilPostLanguageTypeRepository utilPostLanguageTypeRepository;
     private final UserService userService;
 
-    public ApiResponse addUtilPost(UtilPost utilPost) {
-        utilPost.setUser(userService.getLoginUser());
-        utilPostRepository.save(utilPost);
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponse addUtilPost(UtilPostMaster utilPostMaster) {
+        utilPostMaster.setUser(userService.getLoginUser());
+        utilPostMasterRepository.save(utilPostMaster);
 
-        return ApiResponse.ok(null);
+        return ApiResponse.ok(utilPostMaster.getId());
     }
 
-    public ApiResponse modifyUtilPost(UtilPost utilPost) {
-        UtilPost post = utilPostRepository.findById(utilPost.getId()).orElse(null);
-
-        if (post != null) {
-            post.setTitle(utilPost.getTitle());
-            post.setDescription(utilPost.getDescription());
-            post.setContent(utilPost.getContent());
-            post.setLanguageType(utilPost.getLanguageType());
-
-            utilPostRepository.save(post);
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponse modifyUtilPost(UtilPostMaster utilPostMaster) {
+        if (utilPostMaster != null) {
+            utilPostMaster.setTitle(utilPostMaster.getTitle());
+            utilPostMaster.setDescription(utilPostMaster.getDescription());
+            utilPostMasterRepository.save(utilPostMaster);
         }
 
         return ApiResponse.ok(null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponse mergeUtilPostCode(UtilPostDetailSaveDto postDetailSaveDto) {
+        if (postDetailSaveDto.getId() == null) {
+            UtilPostDetail utilPostDetail = new UtilPostDetail();
+            utilPostDetail.setUtilPostMaster(utilPostMasterRepository.findById(postDetailSaveDto.getMasterId()).get());
+            utilPostDetail.setUtilPostLanguageType(utilPostLanguageTypeRepository.findByLanguageType(postDetailSaveDto.getLanguageType()));
+            utilPostDetail.setContent(postDetailSaveDto.getContent());
+            utilPostDetailRepository.save(utilPostDetail);
+
+        } else {
+            UtilPostDetail utilPostDetail = utilPostDetailRepository.findById(postDetailSaveDto.getId()).get();
+            utilPostDetail.setContent(postDetailSaveDto.getContent());
+            utilPostDetailRepository.save(utilPostDetail);
+        }
+
+        return ApiResponse.ok(null);
+    }
+
+    public ApiResponse removeUtilPostCode(UtilPostDetail utilPostDetail) {
+        utilPostDetailRepository.delete(utilPostDetail);
+        return ApiResponse.ok(null);
+    }
+
     public ApiResponse loadUtilPostList(UtilPostSearchFilterDto searchFilter) {
-        List<UtilPostListProjection> utilPostList = utilPostRepository.findUtilPostList(searchFilter);
+        List<UtilPostListDto> utilPostList = utilPostMasterRepository.findUtilPostList(searchFilter);
         return ApiResponse.ok(utilPostList);
     }
 
-    public ApiResponse loadUtilPostDetail(long utilPostId) {
-        UtilPostDetailProjection utilPostDetail = utilPostRepository.findById(utilPostId);
-        return ApiResponse.ok(utilPostDetail);
+    public ApiResponse loadUtilPostMasterDetail(long utilPostMasterId) {
+        UtilPostMasterDetailDto utilPostMasterDetailDto = utilPostMasterRepository.findUtilPostMasterDetail(utilPostMasterId);
+        return ApiResponse.ok(utilPostMasterDetailDto);
+    }
+
+    public ApiResponse loadUtilPostCodeDetail(Long utilPostMasterId, String languageType) {
+        UtilPostCodeDetailDto utilPostCodeDetailDto = utilPostDetailRepository.findUtilPostCodeDetail(utilPostMasterId, languageType);
+        return ApiResponse.ok(utilPostCodeDetailDto);
     }
 
     public ApiResponse loadUtilPostLanguageTypeList() {
