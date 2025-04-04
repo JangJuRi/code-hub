@@ -84,4 +84,9 @@ public class UtilPostService {
         List<UtilPostLanguageType> languageTypeList = utilPostLanguageTypeRepository.findAll();
         return ApiResponse.ok(languageTypeList);
     }
+
+    public ApiResponse loadUtilPostLanguageListByPostMasterId(Long utilPostMasterId) {
+        List<UtilPostLanguageType> languageTypeList = utilPostLanguageTypeRepository.findAllByUtilPostMasterId(utilPostMasterId);
+        return ApiResponse.ok(languageTypeList);
+    }
 }

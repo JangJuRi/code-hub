@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UtilPostDetailRepository extends JpaRepository<UtilPostDetail, Long> {
     @Query(value = "select new com.jr.utilHub.api.user.utilPost.dto.UtilPostCodeDetailDto(" +
-            "   upd.id" +
-            " , upd.content" +
-            ") " +
-            "  from UtilPostDetail upd" +
-            " where upd.utilPostMaster.id = :utilPostMasterId" +
-            "   and upd.utilPostLanguageType.languageType = :languageType"
+                   "       upd.id" +
+                   "     , upd.content" +
+                   ") " +
+                   "  from UtilPostDetail upd" +
+                   " where upd.utilPostMaster.id = :utilPostMasterId" +
+                   "   and upd.utilPostLanguageType.languageType = :languageType"
     )
     UtilPostCodeDetailDto findUtilPostCodeDetail(Long utilPostMasterId, String languageType);
 }

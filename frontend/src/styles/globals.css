@@ -7,6 +7,16 @@
     --search-bg-color: #1e1e1e; /* 검색 바 배경 */
 }
 
+::-webkit-scrollbar {
+    display: block;
+}
+::-webkit-scrollbar-track, ::-webkit-scrollbar-button {
+    display: none;
+}
+::-webkit-scrollbar-thumb {
+    background-color: gray;
+}
+
 body {
     background-color: var(--background-color);
     color: var(--text-color);

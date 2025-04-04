@@ -31,7 +31,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     }, [language]);
 
     const loadMasterDetail = async () => {
-        const result= await customFetch(`/user/util-post/master-detail/load/${id}`, {
+        const result= await customFetch(`/user/util-post/master-detail/${id}/load`, {
             method: 'GET'
         })
 
@@ -44,7 +44,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     }
 
     const loadCodeDetail = async () => {
-        const result= await customFetch(`/user/util-post/code-detail/load/${id}/${language}`, {
+        const result= await customFetch(`/user/util-post/code-detail/${id}/${language}/load`, {
             method: 'GET'
         })
 
@@ -126,7 +126,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     }
 
     return (
-        <div className="container py-5">
+        <div className="container">
             <div className="card bg-dark text-light p-4" style={{ minHeight: "600px", display: "flex", flexDirection: "column" }}>
                 <form onSubmit={handleSubmit} className="d-flex flex-column flex-grow-1">
                     <div className="row flex-grow-1">
@@ -195,6 +195,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                     formatOnType: true, // 입력 시 코드 자동 포맷
                                     formatOnPaste: true, // 붙여넣기 시 코드 자동 포맷
                                     autoIndent: "full", // 자동 들여쓰기
+                                    scrollBeyondLastLine: false, // 마지막 줄 이후 스크롤 없앰
                                 }}
                             />
                             <div className="d-flex justify-content-end mt-2">

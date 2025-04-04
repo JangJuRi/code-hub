@@ -7,7 +7,6 @@ import {useRouter} from "next/navigation";
 import Link from "next/link";
 
 export default function Write({ params }: { params: Promise<{ id: string }> }) {
-    const router = useRouter();
     const { id } = use(params);
 
     const [title, setTitle] = useState("");
@@ -18,7 +17,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
 
     useEffect(() => {
         loadMasterDetail();
-        loadTagList();
+        loadLanguageList();
     }, []);
 
     useEffect(() => {
@@ -28,7 +27,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     }, [language]);
 
     const loadMasterDetail = async () => {
-        const result= await customFetch(`/user/util-post/master-detail/load/${id}`, {
+        const result= await customFetch(`/user/util-post/master-detail/${id}/load`, {
             method: 'GET'
         })
 
@@ -41,7 +40,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     }
 
     const loadCodeDetail = async () => {
-        const result= await customFetch(`/user/util-post/code-detail/load/${id}/${language}`, {
+        const result= await customFetch(`/user/util-post/code-detail/${id}/${language}/load`, {
             method: 'GET'
         })
 
@@ -52,13 +51,14 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
         }
     }
 
-    const loadTagList = async () => {
-        const result = await customFetch('/user/util-post/language-type/list/load', {
+    const loadLanguageList = async () => {
+        const result = await customFetch(`/user/util-post/language/list/${id}/load`, {
             method: 'GET'
         })
 
         if (result.success) {
             setLanguageList(result.data);
+            setLanguage(result.data[0].languageType);
         }
     }
 
@@ -66,15 +66,30 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
         setLanguage(language);
     };
 
+    const copyCode = () => {
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert("복사 완료!");
+            })
+    }
+
     return (
-        <div className="container py-5">
+        <div className="container">
             <div className="card bg-dark text-light p-4" style={{ minHeight: "600px", display: "flex", flexDirection: "column" }}>
                 <div className="d-flex flex-column flex-grow-1">
                     <div className="row flex-grow-1">
-                        <div style={{ minHeight: "80px" }} className="d-flex flex-wrap gap-2 justify-content-between">
-                            <span className="fs-2 fw-bold">{title}</span>
+                        <div className="d-flex flex-wrap gap-2 justify-content-between">
+                            <span className="fs-3 fw-bold">{title}</span>
 
-                            <div className="d-flex gap-2">
+                            <button className="btn btn-sm btn-outline-light align-self-start"
+                                    onClick={() => copyCode()}>
+                                <i className="bi bi-clipboard me-1"></i> 코드 복사
+                            </button>
+                        </div>
+
+                        {/* 왼쪽 입력 필드 (30%) */}
+                        <div className="col-md-4 d-flex flex-column gap-3">
+                            <div className="d-flex gap-2 mb-2">
                                 {languageList.map((languageValue) => (
                                     <button type="button" key={languageValue.languageType}
                                             value={language}
@@ -86,11 +101,9 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                     </button>
                                 ))}
                             </div>
-                        </div>
 
-                        {/* 왼쪽 입력 필드 (30%) */}
-                        <div className="col-md-4 d-flex flex-column gap-3">
-                            <div>
+                            <div className="flex-grow-1 overflow-auto shadow-lg rounded-3 p-2"
+                                 style={{ maxHeight: "360px" }}>
                                 {description.split('\n').map((line, index) => (
                                     <span key={index}>
                                         {line}
@@ -98,12 +111,16 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                     </span>
                                 ))}
                             </div>
+
+                            <Link className="btn btn-primary" href={`/user/util/write/${id}`}>
+                                수정하기
+                            </Link>
                         </div>
 
                         {/* 오른쪽 Monaco Editor (70%) */}
                         <div className="col-md-8">
                             <Editor
-                                height="420px"
+                                height="490px"
                                 language={language}
                                 theme="vs-dark"
                                 value={code}
@@ -114,14 +131,12 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                     formatOnType: true, // 입력 시 코드 자동 포맷
                                     formatOnPaste: true, // 붙여넣기 시 코드 자동 포맷
                                     autoIndent: "full", // 자동 들여쓰기
+                                    scrollBeyondLastLine: false, // 마지막 줄 이후 스크롤 없앰
                                     readOnly: true
                                 }}
                             />
                         </div>
                     </div>
-                    <Link className="btn btn-primary" href={`/user/util/write/${id}`}>
-                        수정하기
-                    </Link>
                 </div>
             </div>
         </div>
