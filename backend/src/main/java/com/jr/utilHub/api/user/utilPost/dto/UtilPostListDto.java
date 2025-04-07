@@ -7,18 +7,16 @@ import lombok.Setter;
 @Setter
 public class UtilPostListDto {
     private Long id;
-    private String title;
-    private String description;
+    private Long masterId;
+    private String content;
+    private String accountId;
     private String languageType;
-    private String color;
-    private String userName;
 
-    public UtilPostListDto(Long id, String title, String description, String languageType, String color, String userName) {
+    public UtilPostListDto(Long id, Long masterId, String content, String accountId, String languageType) {
         this.id = id;
-        this.title = title;
-        this.description = description;
+        this.masterId = masterId;
+        this.content = content;
+        this.accountId = accountId;
         this.languageType = languageType;
-        this.color = color;
-        this.userName = userName;
     }
 }

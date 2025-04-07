@@ -24,7 +24,7 @@ public class UtilPostMaster extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "utilPostMaster")
-    private List<UtilPostDetail> utilPostDetail;
+    private List<UtilPost> utilPost;
 
     private String title;
     private String description;

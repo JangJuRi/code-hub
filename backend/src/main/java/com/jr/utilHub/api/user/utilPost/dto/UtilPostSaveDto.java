@@ -5,12 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UtilPostCodeDetailDto {
+public class UtilPostSaveDto {
     private Long id;
+    private Long masterId;
+    private String languageType;
     private String content;
-
-    public UtilPostCodeDetailDto(Long id, String content) {
-        this.id = id;
-        this.content = content;
-    }
 }

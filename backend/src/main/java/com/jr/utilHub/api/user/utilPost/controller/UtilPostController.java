@@ -1,9 +1,9 @@
 package com.jr.utilHub.api.user.utilPost.controller;
 
-import com.jr.utilHub.api.user.utilPost.dto.UtilPostDetailSaveDto;
+import com.jr.utilHub.api.user.utilPost.dto.UtilPostSaveDto;
 import com.jr.utilHub.api.user.utilPost.dto.UtilPostSearchFilterDto;
 import com.jr.utilHub.api.user.utilPost.service.UtilPostService;
-import com.jr.utilHub.entity.UtilPostDetail;
+import com.jr.utilHub.entity.UtilPost;
 import com.jr.utilHub.entity.UtilPostMaster;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,40 +14,40 @@ import org.springframework.web.bind.annotation.*;
 public class UtilPostController {
     private final UtilPostService utilPostService;
 
-    @PostMapping("/user/util-post/add")
-    public ResponseEntity<?> addUtilPost(@RequestBody UtilPostMaster utilPostMaster) {
-        return ResponseEntity.ok(utilPostService.addUtilPost(utilPostMaster));
+    @PostMapping("/user/util-post/master/add")
+    public ResponseEntity<?> addUtilPostMaster(@RequestBody UtilPostMaster utilPostMaster) {
+        return ResponseEntity.ok(utilPostService.addUtilPostMaster(utilPostMaster));
     }
 
-    @PostMapping("/user/util-post/modify")
-    public ResponseEntity<?> modifyUtilPost(@RequestBody UtilPostMaster utilPostMaster) {
-        return ResponseEntity.ok(utilPostService.modifyUtilPost(utilPostMaster));
+    @PostMapping("/user/util-post/master/modify")
+    public ResponseEntity<?> modifyUtilPostMaster(@RequestBody UtilPostMaster utilPostMaster) {
+        return ResponseEntity.ok(utilPostService.modifyUtilPostMaster(utilPostMaster));
     }
 
-    @PostMapping("/user/util-post/code/merge")
-    public ResponseEntity<?> mergeUtilPostCode(@RequestBody UtilPostDetailSaveDto postSaveDto) {
-        return ResponseEntity.ok(utilPostService.mergeUtilPostCode(postSaveDto));
+    @PostMapping("/user/util-post/merge")
+    public ResponseEntity<?> mergeUtilPost(@RequestBody UtilPostSaveDto postSaveDto) {
+        return ResponseEntity.ok(utilPostService.mergeUtilPost(postSaveDto));
     }
 
-    @PostMapping("/user/util-post/code/remove")
-    public ResponseEntity<?> removeUtilPostCode(@RequestBody UtilPostDetail utilPostDetail) {
-        return ResponseEntity.ok(utilPostService.removeUtilPostCode(utilPostDetail));
+    @PostMapping("/user/util-post/remove")
+    public ResponseEntity<?> removeUtilPost(@RequestBody UtilPost utilPost) {
+        return ResponseEntity.ok(utilPostService.removeUtilPost(utilPost));
     }
 
-    @GetMapping("/user/util-post/list/load")
-    public ResponseEntity<?> loadUtilPostList(UtilPostSearchFilterDto searchFilter) {
-        return ResponseEntity.ok(utilPostService.loadUtilPostList(searchFilter));
+    @GetMapping("/user/util-post/master/list/load")
+    public ResponseEntity<?> loadUtilPostMasterList(UtilPostSearchFilterDto searchFilter) {
+        return ResponseEntity.ok(utilPostService.loadUtilPostMasterList(searchFilter));
     }
 
-    @GetMapping("/user/util-post/master-detail/{utilPostMasterId}/load")
+    @GetMapping("/user/util-post/master/detail/{utilPostMasterId}/load")
     public ResponseEntity<?> loadUtilPostMasterDetail(@PathVariable("utilPostMasterId") Long utilPostMasterId) {
         return ResponseEntity.ok(utilPostService.loadUtilPostMasterDetail(utilPostMasterId));
     }
 
-    @GetMapping("/user/util-post/code-detail/{utilPostMasterId}/{language}/load")
-    public ResponseEntity<?> loadUtilPostCodeDetail(@PathVariable("utilPostMasterId") Long utilPostMasterId,
-                                                    @PathVariable("language") String languageType) {
-        return ResponseEntity.ok(utilPostService.loadUtilPostCodeDetail(utilPostMasterId, languageType));
+    @GetMapping("/user/util-post/list/{utilPostMasterId}/{language}/load")
+    public ResponseEntity<?> loadUtilPostList(@PathVariable("utilPostMasterId") Long utilPostMasterId,
+                                              @PathVariable("language") String languageType) {
+        return ResponseEntity.ok(utilPostService.loadUtilPostList(utilPostMasterId, languageType));
     }
 
     @GetMapping("/user/util-post/language-type/list/load")
@@ -58,5 +58,10 @@ public class UtilPostController {
     @GetMapping("/user/util-post/language/list/{utilPostMasterId}/load")
     public ResponseEntity<?> loadUtilPostLanguageListByPostMasterId(@PathVariable("utilPostMasterId") Long utilPostMasterId) {
         return ResponseEntity.ok(utilPostService.loadUtilPostLanguageListByPostMasterId(utilPostMasterId));
+    }
+
+    @GetMapping("/user/util-post/detail/{utilPostId}/load")
+    public ResponseEntity<?> loadUtilPostDetail(@PathVariable("utilPostId") Long utilPostId) {
+        return ResponseEntity.ok(utilPostService.loadUtilPostDetail(utilPostId));
     }
 }

@@ -3,10 +3,11 @@
 import {use, useEffect, useState} from "react";
 import Editor from "@monaco-editor/react";
 import customFetch from "@/api/customFetch";
-import {useRouter} from "next/navigation";
 import Link from "next/link";
+import PostCard from "@/components/utilPost/PostCard";
+import PostModal from "@/components/utilPost/PostModal";
 
-export default function Write({ params }: { params: Promise<{ id: string }> }) {
+export default function Write({ params }: { params: Promise<{ id: number }> }) {
     const { id } = use(params);
 
     const [title, setTitle] = useState("");
@@ -14,6 +15,22 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     const [code, setCode] = useState("");
     const [languageList, setLanguageList] = useState([]);
     const [language, setLanguage] = useState("java");  // 언어 상태 관리
+    const [postList, setPostList] = useState([]);
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    type LanguageItem = {
+        languageType: string;
+        color: string;
+    };
+
+    type postItem = {
+        id: number,
+        masterId: number,
+        accountId: string,
+        languageType: string,
+        content: string,
+        likes: number,
+    };
 
     useEffect(() => {
         loadMasterDetail();
@@ -21,13 +38,11 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     }, []);
 
     useEffect(() => {
-        if (id !== 'new') {
-            loadCodeDetail();
-        }
+        loadPostList();
     }, [language]);
 
     const loadMasterDetail = async () => {
-        const result= await customFetch(`/user/util-post/master-detail/${id}/load`, {
+        const result= await customFetch(`/user/util-post/master/detail/${id}/load`, {
             method: 'GET'
         })
 
@@ -39,15 +54,16 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
         }
     }
 
-    const loadCodeDetail = async () => {
-        const result= await customFetch(`/user/util-post/code-detail/${id}/${language}/load`, {
+    const loadPostList = async () => {
+        const result= await customFetch(`/user/util-post/list/${id}/${language}/load`, {
             method: 'GET'
         })
 
         if (result.success) {
             const data = result.data;
 
-            setCode(data ? data.content : '');
+            setCode(data.length > 0 ? data[0].content : '');
+            setPostList(data);
         }
     }
 
@@ -58,7 +74,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
 
         if (result.success) {
             setLanguageList(result.data);
-            setLanguage(result.data[0].languageType);
+            setLanguage(result.data[0]?.languageType);
         }
     }
 
@@ -73,16 +89,21 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
             })
     }
 
+    const reloadList = async () => {
+        await loadLanguageList();
+        await loadPostList();
+        setModalOpen(false);
+    }
+
     return (
         <div className="container">
-            <div className="card bg-dark text-light p-4" style={{ minHeight: "600px", display: "flex", flexDirection: "column" }}>
+            <div className="card bg-dark text-light p-4" style={{ minHeight: '600px', display: 'flex', flexDirection: 'column' }}>
                 <div className="d-flex flex-column flex-grow-1">
                     <div className="row flex-grow-1">
                         <div className="d-flex flex-wrap gap-2 justify-content-between">
                             <span className="fs-3 fw-bold">{title}</span>
 
-                            <button className="btn btn-sm btn-outline-light align-self-start"
-                                    onClick={() => copyCode()}>
+                            <button className="btn btn-sm btn-outline-light align-self-start" onClick={copyCode}>
                                 <i className="bi bi-clipboard me-1"></i> 코드 복사
                             </button>
                         </div>
@@ -90,20 +111,20 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                         {/* 왼쪽 입력 필드 (30%) */}
                         <div className="col-md-4 d-flex flex-column gap-3">
                             <div className="d-flex gap-2 mb-2">
-                                {languageList.map((languageValue) => (
-                                    <button type="button" key={languageValue.languageType}
-                                            value={language}
-                                            onClick={() => handleLanguageChange(languageValue.languageType)}
-                                            className={`language-button btn rounded-circle d-flex align-items-center justify-content-center
-                                                    ${language === languageValue.languageType ? 'is-active' : ""}`}
-                                            style={{ background: languageValue.color }}>
+                                {languageList.map((languageValue: LanguageItem) => (
+                                    <button
+                                        type="button"
+                                        key={languageValue.languageType}
+                                        value={language}
+                                        onClick={() => handleLanguageChange(languageValue.languageType)}
+                                        className={`language-button btn rounded-circle d-flex align-items-center justify-content-center ${language === languageValue.languageType ? 'is-active' : ''}`}
+                                        style={{ background: languageValue.color }}>
                                         {languageValue.languageType}
                                     </button>
                                 ))}
                             </div>
 
-                            <div className="flex-grow-1 overflow-auto shadow-lg rounded-3 p-2"
-                                 style={{ maxHeight: "360px" }}>
+                            <div className="flex-grow-1 overflow-auto shadow-lg rounded-3 p-2" style={{ maxHeight: '360px' }}>
                                 {description.split('\n').map((line, index) => (
                                     <span key={index}>
                                         {line}
@@ -112,7 +133,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                 ))}
                             </div>
 
-                            <Link className="btn btn-primary" href={`/user/util/write/${id}`}>
+                            <Link className="btn btn-primary" href={`/user/util-post/write/${id}`}>
                                 수정하기
                             </Link>
                         </div>
@@ -127,17 +148,33 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
                                 options={{
                                     fontSize: 15,
                                     minimap: { enabled: false },
-                                    automaticLayout: true, // 자동 레이아웃
-                                    formatOnType: true, // 입력 시 코드 자동 포맷
-                                    formatOnPaste: true, // 붙여넣기 시 코드 자동 포맷
-                                    autoIndent: "full", // 자동 들여쓰기
-                                    scrollBeyondLastLine: false, // 마지막 줄 이후 스크롤 없앰
-                                    readOnly: true
+                                    automaticLayout: true,
+                                    formatOnType: true,
+                                    formatOnPaste: true,
+                                    autoIndent: 'full',
+                                    scrollBeyondLastLine: false,
+                                    readOnly: true,
                                 }}
                             />
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <hr className="my-lg-5 border-light border-3" style={{ borderStyle: 'dotted' }} />
+
+            <div className="mt-4">
+                <div className="d-flex justify-content-end mb-3">
+                    <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
+                        작성하기
+                    </button>
+                </div>
+
+                {postList.map((post:postItem) => (
+                    <PostCard key={post.id} {...post} reloadList={() => reloadList()}/>
+                ))}
+
+                {isModalOpen && <PostModal reloadList={() => reloadList()} masterId={id} />}
             </div>
         </div>
     );

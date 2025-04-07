@@ -6,20 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "TABLE_UTIL_POST_DETAIL",
-uniqueConstraints = @UniqueConstraint(columnNames = {"languageType_id", "utilPostMaster_id"}))
+@Table(name = "TABLE_UTIL_POST")
 
-public class UtilPostDetail extends BaseEntity {
+public class UtilPost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "languageType_id")

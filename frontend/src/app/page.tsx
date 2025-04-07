@@ -18,7 +18,7 @@ const Home = () => {
     }, [filter]);
 
     const loadList = async () => {
-        const result= await customFetch('/user/util-post/list/load', {
+        const result= await customFetch('/user/util-post/master/list/load', {
             method: 'GET',
             query: {
                 text: filter.text,
@@ -45,7 +45,7 @@ const Home = () => {
 
             <SearchBar filter={filter} updateFilter={updateFilter} />
             <div className="d-flex justify-content-end w-100 px-4">
-                <Link href="/user/util/write/new">
+                <Link href="/user/util-post/write/new">
                     <button className="btn btn-primary write-btn">글쓰기</button>
                 </Link>
             </div>
