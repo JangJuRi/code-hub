@@ -30,6 +30,7 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
         languageType: string,
         content: string,
         likes: number,
+        topYn: string,
     };
 
     useEffect(() => {

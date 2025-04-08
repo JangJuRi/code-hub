@@ -48,10 +48,15 @@ public class UtilPostService {
         if (postDetailSaveDto.getId() == null) {
             UtilPost utilPost = new UtilPost();
             utilPost.setUtilPostMaster(utilPostMasterRepository.findById(postDetailSaveDto.getMasterId()).get());
-            utilPost.setUtilPostLanguageType(utilPostLanguageTypeRepository.findByLanguageType(postDetailSaveDto.getLanguageType()));
+            UtilPostLanguageType utilPostLanguageType = utilPostLanguageTypeRepository.findByLanguageType(postDetailSaveDto.getLanguageType());
+            utilPost.setUtilPostLanguageType(utilPostLanguageType);
             utilPost.setContent(postDetailSaveDto.getContent());
+            utilPost.setRecommendCount(0L);
             utilPost.setUser(userService.getLoginUser());
+
             utilPostRepository.save(utilPost);
+
+            updateTopYn(postDetailSaveDto.getMasterId(), utilPostLanguageType);
 
         } else {
             UtilPost utilPost = utilPostRepository.findById(postDetailSaveDto.getId()).get();
@@ -62,8 +67,17 @@ public class UtilPostService {
         return ApiResponse.ok(null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ApiResponse removeUtilPost(UtilPost utilPost) {
+        Long utilPostId = utilPost.getId();
+        UtilPost searchUtilPost = utilPostRepository.findWithUtilPostMasterAndLanguageTypeById(utilPostId);
+        UtilPostLanguageType utilPostLanguageType = searchUtilPost.getUtilPostLanguageType();
+        Long utilPostMasterId = searchUtilPost.getUtilPostMaster().getId();
+
         utilPostRepository.delete(utilPost);
+
+        updateTopYn(utilPostMasterId, utilPostLanguageType);
+
         return ApiResponse.ok(null);
     }
 
@@ -95,5 +109,15 @@ public class UtilPostService {
     public ApiResponse loadUtilPostDetail(Long utilPostId) {
         UtilPostDetailDto utilPostDetailDto = utilPostRepository.findUtilPostDetail(utilPostId);
         return ApiResponse.ok(utilPostDetailDto);
+    }
+
+    private void updateTopYn(Long utilPostMasterId, UtilPostLanguageType utilPostLanguageType) {
+        utilPostRepository.resetAllTopYn(utilPostMasterId, utilPostLanguageType);
+        UtilPost utilPost = utilPostRepository.findFirstByUtilPostMasterIdAndUtilPostLanguageTypeOrderByRecommendCountDescCreatedAtAsc(utilPostMasterId, utilPostLanguageType);
+
+        if (utilPost != null) {
+            utilPost.setTopYn('Y');
+            utilPostRepository.save(utilPost);
+        }
     }
 }

@@ -11,10 +11,11 @@ interface PostCardProps {
     languageType: string,
     content: string,
     likes: number,
+    topYn: string,
     reloadList: () => void;
 }
 
-export default function PostCard({id, masterId, accountId, languageType, content, likes, reloadList}: PostCardProps) {
+export default function PostCard({id, masterId, accountId, languageType, content, likes, topYn, reloadList}: PostCardProps) {
     const [isModalOpen, setModalOpen] = useState(false);
 
     const onClose = () => {
@@ -39,7 +40,12 @@ export default function PostCard({id, masterId, accountId, languageType, content
     return (
         <div className="card bg-secondary text-light mb-3 p-3">
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <div><strong>{accountId}</strong></div>
+                <div>
+                    {topYn === 'Y' &&
+                        <i className="bi bi-award-fill text-warning me-2"></i>
+                    }
+                    <strong>{accountId}</strong>
+                </div>
 
                 <div className="d-flex align-items-center gap-2">
                     {/* 추천 버튼 */}

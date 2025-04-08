@@ -32,4 +32,10 @@ public class UtilPost extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @Column(columnDefinition = "BIGINT DEFAULT 0")
+    private Long recommendCount;
+
+    @Column(columnDefinition = "CHAR(1) DEFAULT 'N'")
+    private Character topYn;
 }
