@@ -24,5 +24,5 @@ public class UtilPostRecommend {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "util_post_id")
-    private UtilPost post;
+    private UtilPost utilPost;
 }

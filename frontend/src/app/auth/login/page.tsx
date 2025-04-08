@@ -20,7 +20,6 @@ export default function Register() {
 
         const formData = new FormData();
         formData.append("accountId", form.accountId);
-        formData.append("username", form.accountId);
         formData.append("password", form.password);
 
         login(formData);

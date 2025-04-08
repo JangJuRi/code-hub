@@ -12,13 +12,18 @@ public class UtilPostListDto {
     private String accountId;
     private String languageType;
     private Character topYn;
+    private Long recommendCount;
+    private Long recommendId;
 
-    public UtilPostListDto(Long id, Long masterId, String content, String accountId, String languageType, Character topYn) {
+    public UtilPostListDto(Long id, Long masterId, String content, String accountId, String languageType
+                           , Character topYn, Long recommendCount, Long recommendId) {
         this.id = id;
         this.masterId = masterId;
         this.content = content;
         this.accountId = accountId;
         this.languageType = languageType;
         this.topYn = topYn;
+        this.recommendCount = recommendCount;
+        this.recommendId = recommendId;
     }
 }

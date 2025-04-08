@@ -29,17 +29,18 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String generateToken(String username) {
+    public String generateToken(String userId, String accountId) {
         return Jwts.builder()
-                .subject(username)
+                .subject(userId)
+                .claim("accountId", accountId)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(getSigningKey()) // SignatureAlgorithm 제거됨
                 .compact();
     }
 
-    // 토큰에서 사용자명 추출
-    public String getUsernameFromToken(String token) {
+    // 토큰에서 userId 추출
+    public String getUserIdFromToken(String token) {
         return getClaims(token).getSubject();
     }
 

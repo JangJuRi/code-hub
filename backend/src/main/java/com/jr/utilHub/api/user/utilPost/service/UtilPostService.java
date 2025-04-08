@@ -2,14 +2,14 @@ package com.jr.utilHub.api.user.utilPost.service;
 
 import com.jr.utilHub.api.user.user.service.UserService;
 import com.jr.utilHub.api.user.utilPost.dto.*;
+import com.jr.utilHub.api.user.utilPost.repository.UtilPostRecommendRepository;
 import com.jr.utilHub.api.user.utilPost.repository.UtilPostRepository;
 import com.jr.utilHub.api.user.utilPost.repository.UtilPostLanguageTypeRepository;
 import com.jr.utilHub.api.user.utilPost.repository.UtilPostMasterRepository;
-import com.jr.utilHub.entity.UtilPost;
-import com.jr.utilHub.entity.UtilPostMaster;
-import com.jr.utilHub.entity.UtilPostLanguageType;
+import com.jr.utilHub.entity.*;
 import com.jr.utilHub.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +22,7 @@ public class UtilPostService {
     private final UtilPostRepository utilPostRepository;
     private final UtilPostLanguageTypeRepository utilPostLanguageTypeRepository;
     private final UserService userService;
+    private final UtilPostRecommendRepository utilPostRecommendRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public ApiResponse addUtilPostMaster(UtilPostMaster utilPostMaster) {
@@ -56,7 +57,7 @@ public class UtilPostService {
 
             utilPostRepository.save(utilPost);
 
-            updateTopYn(postDetailSaveDto.getMasterId(), utilPostLanguageType);
+            updateTopYn(postDetailSaveDto.getId());
 
         } else {
             UtilPost utilPost = utilPostRepository.findById(postDetailSaveDto.getId()).get();
@@ -69,14 +70,9 @@ public class UtilPostService {
 
     @Transactional(rollbackFor = Exception.class)
     public ApiResponse removeUtilPost(UtilPost utilPost) {
-        Long utilPostId = utilPost.getId();
-        UtilPost searchUtilPost = utilPostRepository.findWithUtilPostMasterAndLanguageTypeById(utilPostId);
-        UtilPostLanguageType utilPostLanguageType = searchUtilPost.getUtilPostLanguageType();
-        Long utilPostMasterId = searchUtilPost.getUtilPostMaster().getId();
-
         utilPostRepository.delete(utilPost);
 
-        updateTopYn(utilPostMasterId, utilPostLanguageType);
+        updateTopYn(utilPost.getId());
 
         return ApiResponse.ok(null);
     }
@@ -92,7 +88,8 @@ public class UtilPostService {
     }
 
     public ApiResponse loadUtilPostList(Long utilPostMasterId, String languageType) {
-        List<UtilPostListDto> utilPostListDto = utilPostRepository.findUtilPostList(utilPostMasterId, languageType);
+        User loginUser = userService.getLoginUser();
+        List<UtilPostListDto> utilPostListDto = utilPostRepository.findUtilPostList(utilPostMasterId, languageType, loginUser);
         return ApiResponse.ok(utilPostListDto);
     }
 
@@ -111,9 +108,38 @@ public class UtilPostService {
         return ApiResponse.ok(utilPostDetailDto);
     }
 
-    private void updateTopYn(Long utilPostMasterId, UtilPostLanguageType utilPostLanguageType) {
-        utilPostRepository.resetAllTopYn(utilPostMasterId, utilPostLanguageType);
-        UtilPost utilPost = utilPostRepository.findFirstByUtilPostMasterIdAndUtilPostLanguageTypeOrderByRecommendCountDescCreatedAtAsc(utilPostMasterId, utilPostLanguageType);
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponse mergeUtilPostRecommend(Long utilPostId) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        UtilPostRecommend saveUtilPostRecommend = utilPostRecommendRepository.findByUtilPostIdAndUserId(utilPostId, userId);
+        UtilPost utilPost = utilPostRepository.findById(utilPostId).get();
+
+        if (saveUtilPostRecommend == null) {
+            User user = userService.getLoginUser();
+
+            UtilPostRecommend utilPostRecommend = new UtilPostRecommend();
+            utilPostRecommend.setUtilPost(utilPost);
+            utilPostRecommend.setUser(user);
+
+            utilPostRecommendRepository.save(utilPostRecommend);
+
+            utilPost.setRecommendCount(utilPost.getRecommendCount() + 1);
+
+        } else {
+            utilPostRecommendRepository.delete(saveUtilPostRecommend);
+            utilPost.setRecommendCount(utilPost.getRecommendCount() - 1);
+        }
+
+        utilPostRepository.save(utilPost); // 추천 수 저장
+        updateTopYn(utilPostId); // topYn 저장
+
+        return ApiResponse.ok(null);
+    }
+
+    private void updateTopYn(Long utilPostId) {
+        UtilPostTopYnUpdateDto utilPostLanguageTypeDto = utilPostRepository.findTopYnUpdateInfoById(utilPostId);
+        utilPostRepository.resetAllTopYn(utilPostLanguageTypeDto.getUtilPostMasterId(), utilPostLanguageTypeDto.getUtilPostLanguageType());
+        UtilPost utilPost = utilPostRepository.findFirstByUtilPostMasterIdAndUtilPostLanguageTypeLanguageTypeOrderByRecommendCountDescCreatedAtAsc(utilPostLanguageTypeDto.getUtilPostMasterId(), utilPostLanguageTypeDto.getUtilPostLanguageType());
 
         if (utilPost != null) {
             utilPost.setTopYn('Y');

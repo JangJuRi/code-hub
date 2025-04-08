@@ -2,6 +2,7 @@ package com.jr.utilHub.api.auth.service;
 
 import com.jr.utilHub.api.security.CustomUserDetails;
 import com.jr.utilHub.api.user.user.repository.UserRepository;
+import com.jr.utilHub.api.user.user.service.UserService;
 import com.jr.utilHub.entity.User;
 import com.jr.utilHub.util.ApiResponse;
 import com.jr.utilHub.util.CommonUtil;
@@ -18,12 +19,13 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
     public ApiResponse checkLogin() {
-        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        User loginUser = userService.getLoginUser();
 
-        return ApiResponse.ok(id);
+        return ApiResponse.ok(loginUser.getAccountId());
     }
 
     public ApiResponse signup(User user) {
@@ -47,11 +49,11 @@ public class AuthService {
         }
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getAccountId(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(loginUser.getId(), user.getPassword())
         );
 
         CustomUserDetails authUser = (CustomUserDetails) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(authUser.getUsername());
+        String token = jwtUtil.generateToken(authUser.getUsername(), user.getAccountId());
 
         return ApiResponse.ok(token);
     }

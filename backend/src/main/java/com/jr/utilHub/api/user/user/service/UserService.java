@@ -12,7 +12,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User getLoginUser() {
-        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findUserByAccountId(accountId);
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        return userRepository.findById(userId).orElse(null);
     }
 }

@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const decoded: any = jwtDecode(token);
                 setAuthenticated(true);
-                setUsername(decoded?.sub || "anonymousUser");
+                setUsername(decoded?.accountId || "anonymousUser");
             } catch (error) {
                 console.error("토큰 디코딩 실패", error);
                 logout();
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.setItem("token", token);
             const decoded: any = jwtDecode(token);
             setAuthenticated(true);
-            setUsername(decoded?.sub || 'anonymousUser');
+            setUsername(decoded?.accountId || 'anonymousUser');
 
         } else {
             localStorage.removeItem("token");

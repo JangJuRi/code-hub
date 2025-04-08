@@ -29,8 +29,9 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
         accountId: string,
         languageType: string,
         content: string,
-        likes: number,
         topYn: string,
+        recommendCount: number,
+        recommendId: number,
     };
 
     useEffect(() => {
@@ -90,8 +91,10 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
             })
     }
 
-    const reloadList = async () => {
-        await loadLanguageList();
+    const reloadList = async (isPostListOnly:boolean = false) => {
+        if (!isPostListOnly) {
+            await loadLanguageList();
+        }
         await loadPostList();
         setModalOpen(false);
     }
@@ -172,7 +175,7 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
                 </div>
 
                 {postList.map((post:postItem) => (
-                    <PostCard key={post.id} {...post} reloadList={() => reloadList()}/>
+                    <PostCard key={post.id} {...post} reloadList={(isPostListOnly:boolean) => reloadList(isPostListOnly)}/>
                 ))}
 
                 {isModalOpen && <PostModal reloadList={() => reloadList()} masterId={id} />}

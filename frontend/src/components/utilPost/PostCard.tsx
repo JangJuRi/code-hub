@@ -10,16 +10,18 @@ interface PostCardProps {
     accountId: string,
     languageType: string,
     content: string,
-    likes: number,
     topYn: string,
-    reloadList: () => void;
+    recommendCount: number,
+    recommendId: number,
+    reloadList: (isPostListOnly:boolean) => void;
 }
 
-export default function PostCard({id, masterId, accountId, languageType, content, likes, topYn, reloadList}: PostCardProps) {
+export default function PostCard({id, masterId, accountId, languageType, content, topYn
+                                 , recommendCount, recommendId, reloadList}: PostCardProps) {
     const [isModalOpen, setModalOpen] = useState(false);
 
     const onClose = () => {
-        reloadList();
+        reloadList(false);
         setModalOpen(false);
     }
 
@@ -37,6 +39,17 @@ export default function PostCard({id, masterId, accountId, languageType, content
         }
     }
 
+    const toggleRecommend = async () => {
+        const result= await customFetch('/user/util-post/recommend/merge', {
+            method: 'POST',
+            body: id
+        })
+
+        if (result.success) {
+            reloadList(true);
+        }
+    }
+
     return (
         <div className="card bg-secondary text-light mb-3 p-3">
             <div className="d-flex justify-content-between align-items-center mb-2">
@@ -49,9 +62,10 @@ export default function PostCard({id, masterId, accountId, languageType, content
 
                 <div className="d-flex align-items-center gap-2">
                     {/* 추천 버튼 */}
-                    <button className="btn btn-outline-danger btn-sm border-0">
-                        <i className="bi bi-hand-thumbs-up me-2"></i>
-                        {likes ?? 0}
+                    <button type='button' className="btn btn-outline-danger btn-sm border-0"
+                            onClick={() => toggleRecommend()}>
+                        <i className={`bi me-2 ${recommendId ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}`}></i>
+                        {recommendCount ?? 0}
                     </button>
 
                     <Dropdown>
@@ -67,20 +81,7 @@ export default function PostCard({id, masterId, accountId, languageType, content
                 </div>
             </div>
 {}
-            <Editor
-                height="200px"
-                language={languageType}
-                theme="vs-dark"
-                value={content}
-                options={{
-                    readOnly: true,
-                    fontSize: 14,
-                    minimap: {enabled: false},
-                    scrollBeyondLastLine: false,
-                    lineNumbers: "on",
-                    automaticLayout: true,
-                }}
-            />
+            <pre>{content}</pre>
             {isModalOpen && <PostModal reloadList={() => onClose()} detailId={id} masterId={masterId}/>}
         </div>
     );
