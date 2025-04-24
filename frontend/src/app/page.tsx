@@ -49,11 +49,19 @@ const Home = () => {
                     <button className="btn btn-primary write-btn">글쓰기</button>
                 </Link>
             </div>
-            <div className="row row-cols-1 row-cols-md-4 g-4 w-100">
-                {list.map((data, index) => (
-                    <UtilPostCard key={index} data={data} />
-                ))}
-            </div>
+            {list.length === 0 ? (
+                <div className="w-100 text-center text-white-50 py-5" style={{ minHeight: "310px" }}>
+                    <i className="bi bi-exclamation-circle fs-3 d-block mb-2"></i>
+                    <div>데이터가 없습니다</div>
+                </div>
+            ) : (
+                <div className="row row-cols-1 row-cols-md-4 g-4 w-100">
+                    {list.map((data, index) => (
+                        <UtilPostCard key={index} data={data} />
+                    ))}
+                </div>
+            )}
+
         </div>
     );
 };
