@@ -1,6 +1,5 @@
-import Editor from '@monaco-editor/react';
 import {Dropdown} from 'react-bootstrap';
-import PostModal from "@/components/utilPost/PostModal";
+import PostModal from "@/components/user/util-post/PostModal";
 import {useState} from "react";
 import customFetch from "@/api/customFetch";
 
@@ -16,7 +15,7 @@ interface PostCardProps {
     reloadList: (isPostListOnly:boolean) => void;
 }
 
-export default function PostCard({id, masterId, accountId, languageType, content, topYn
+export default function PostCard({id, masterId, accountId, content, topYn
                                  , recommendCount, recommendId, reloadList}: PostCardProps) {
     const [isModalOpen, setModalOpen] = useState(false);
 

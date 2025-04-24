@@ -53,7 +53,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center">
+        <div className="container py-4 d-flex justify-content-center align-items-center">
             <div className="card bg-dark text-light p-4" style={{ width: "100%", maxWidth: "700px" }}>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">

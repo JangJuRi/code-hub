@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 
 interface AuthContextType {
     authenticated: boolean;
+    userId: number | null;
     username: string | null;
     login: (token: FormData) => void;
     logout: () => void;
@@ -18,6 +19,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
     const [authenticated, setAuthenticated] = useState(false);
+    const [userId, setUserId] = useState<number | null>(null);
     const [username, setUsername] = useState<string | null>(null);
 
     useEffect(() => {
@@ -27,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const decoded: any = jwtDecode(token);
                 setAuthenticated(true);
+                setUserId(decoded.sub);
                 setUsername(decoded?.accountId || "anonymousUser");
             } catch (error) {
                 console.error("토큰 디코딩 실패", error);
@@ -78,17 +81,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.setItem("token", token);
             const decoded: any = jwtDecode(token);
             setAuthenticated(true);
+            setUserId(decoded.sub);
             setUsername(decoded?.accountId || 'anonymousUser');
 
         } else {
             localStorage.removeItem("token");
             setAuthenticated(false);
+            setUserId(null);
             setUsername(null);
         }
     }
 
     return (
-            <AuthContext.Provider value={{ authenticated, username, login, logout, authCheck }}>
+            <AuthContext.Provider value={{ authenticated, userId, username, login, logout, authCheck }}>
                 {children}
             </AuthContext.Provider>
     );

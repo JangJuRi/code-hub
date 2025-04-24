@@ -15,7 +15,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             <body className="d-flex flex-column min-vh-100">
                 <AuthProvider>
                     <Header />
-                        <main className="flex-grow-1 container mt-4">{children}</main>
+                        <main className="flex-grow-1 container">{children}</main>
                     <Footer />
                 </AuthProvider>
             </body>

@@ -4,8 +4,8 @@ import {use, useEffect, useState} from "react";
 import Editor from "@monaco-editor/react";
 import customFetch from "@/api/customFetch";
 import Link from "next/link";
-import PostCard from "@/components/utilPost/PostCard";
-import PostModal from "@/components/utilPost/PostModal";
+import PostCard from "@/components/user/util-post/PostCard";
+import PostModal from "@/components/user/util-post/PostModal";
 
 export default function Write({ params }: { params: Promise<{ id: number }> }) {
     const { id } = use(params);
@@ -100,7 +100,7 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
     }
 
     return (
-        <div className="container">
+        <div className="container py-4">
             <div className="card bg-dark text-light p-4" style={{ minHeight: '600px', display: 'flex', flexDirection: 'column' }}>
                 <div className="d-flex flex-column flex-grow-1">
                     <div className="row flex-grow-1">
