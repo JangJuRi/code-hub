@@ -27,7 +27,7 @@ export default function Register() {
 
     return (
         <div className="register-container">
-            <h2 className="logo">UtilHub</h2>
+            <h2 className="logo">codeHub</h2>
             <form className="register-form" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label className="form-label">아이디</label>

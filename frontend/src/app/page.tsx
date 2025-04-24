@@ -41,7 +41,7 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            <h1 className="logo">UtilHub</h1>
+            <h1 className="logo">codeHub</h1>
 
             <SearchBar filter={filter} updateFilter={updateFilter} />
             <div className="d-flex justify-content-end w-100 px-4">
