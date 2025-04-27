@@ -12,6 +12,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User getLoginUser() {
+        if (SecurityContextHolder.getContext().getAuthentication().getName() instanceof String) {
+            return null;
+        }
+
         Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
         return userRepository.findById(userId).orElse(null);
     }

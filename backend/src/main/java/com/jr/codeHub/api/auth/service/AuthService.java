@@ -24,7 +24,7 @@ public class AuthService {
     public ApiResponse checkLogin() {
         User loginUser = userService.getLoginUser();
 
-        return ApiResponse.ok(loginUser.getAccountId());
+        return ApiResponse.ok(loginUser != null ? loginUser.getAccountId() : "anonymousUser");
     }
 
     public ApiResponse signup(User user) {
