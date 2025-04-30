@@ -9,7 +9,7 @@ interface AuthContextType {
     authenticated: boolean;
     userId: number | null;
     username: string | null;
-    login: (token: FormData) => void;
+    login: (accessToken: FormData) => void;
     logout: () => void;
     authCheck: () => void;
 }
@@ -23,11 +23,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [username, setUsername] = useState<string | null>(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const accessToken = localStorage.getItem("accessToken");
 
-        if (token) {
+        if (accessToken) {
             try {
-                const decoded: any = jwtDecode(token);
+                const decoded: any = jwtDecode(accessToken);
                 setAuthenticated(true);
                 setUserId(decoded.sub);
                 setUsername(decoded?.accountId || "anonymousUser");
@@ -54,8 +54,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const logout = async () => {
-        await customFetch('/logout', {
-            method: 'GET'
+        await customFetch('/auth/logout', {
+            method: 'POST',
         })
 
         authSetting(false, '');
@@ -64,28 +64,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const authCheck = async () => {
-        const result = await customFetch('/auth/check', {
-            method: 'GET'
+        const result = await customFetch('/auth/refresh', {
+            method: 'POST'
         });
 
-        if (result.data === 'anonymousUser') {
+        if (!result.data) {
             authSetting(false, '');
 
             alert("로그인이 필요합니다.")
             router.push("/auth/login");
+        } else {
+            localStorage.setItem("accessToken", result.data);
         }
     }
 
-    const authSetting = (isSuccess: boolean, token: string) => {
+    const authSetting = (isSuccess: boolean, accessToken: string) => {
         if (isSuccess) {
-            localStorage.setItem("token", token);
-            const decoded: any = jwtDecode(token);
+            localStorage.setItem("accessToken", accessToken);
+            const decoded: any = jwtDecode(accessToken);
             setAuthenticated(true);
             setUserId(decoded.sub);
             setUsername(decoded?.accountId || 'anonymousUser');
 
         } else {
-            localStorage.removeItem("token");
+            localStorage.removeItem("accessToken");
             setAuthenticated(false);
             setUserId(null);
             setUsername(null);

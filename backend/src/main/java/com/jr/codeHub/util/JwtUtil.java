@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,11 @@ public class JwtUtil {
     @Value("${jwt-secret-key}")
     private String jwtSecretKey;
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간
+    @Value("${token.access.expired}")
+    private long accessTokenValidTime;
+
+    @Value("${token.refresh.expired}")
+    private long refreshTokenValidTime;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
@@ -28,13 +33,22 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // 토큰 생성
-    public String generateToken(String userId, String accountId) {
+    public String generateAccessToken(String userId, String accountId) {
         return Jwts.builder()
                 .subject(userId)
                 .claim("accountId", accountId)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .expiration(new Date(System.currentTimeMillis() + accessTokenValidTime))
+                .signWith(getSigningKey()) // SignatureAlgorithm 제거됨
+                .compact();
+    }
+
+    public String generateRefreshToken(String userId, String accountId) {
+        return Jwts.builder()
+                .subject(userId)
+                .claim("accountId", accountId)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshTokenValidTime))
                 .signWith(getSigningKey()) // SignatureAlgorithm 제거됨
                 .compact();
     }
@@ -44,16 +58,7 @@ public class JwtUtil {
         return getClaims(token).getSubject();
     }
 
-    // 토큰 유효성 검사
-    public boolean validateToken(String token) {
-        try {
-            return !getClaims(token).getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private Claims getClaims(String token) {
+    public Claims getClaims(String token) {
         try {
             return Jwts.parser()
                     .verifyWith(getSecretKey())
@@ -62,7 +67,19 @@ public class JwtUtil {
                     .getPayload();
         } catch (ExpiredJwtException e) {
             System.out.println("JWT 만료됨: " + e.getMessage());
-            return null; // 만료된 경우 null 반환
+            return null;
+        } catch (Exception e) {
+            System.out.println("JWT 파싱 실패: " + e.getMessage());
+            return null;
         }
+    }
+
+    public boolean isInvalidToken(String token) {
+        return getClaims(token) == null;
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        return (bearerToken != null && bearerToken.startsWith("Bearer ")) ? bearerToken.substring(7) : null;
     }
 }

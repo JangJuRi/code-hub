@@ -15,7 +15,7 @@ const useAuth = () => {
     const excludedPaths = ["/", "/auth/signup", "/auth/login"];
 
     useEffect(() => {
-        if (!excludedPaths.includes(pathname) && !context.authenticated) {
+        if (!excludedPaths.includes(pathname)) {
             context.authCheck(); // 로그인 정보 체크
         }
     }, [pathname, context.authenticated, router]);

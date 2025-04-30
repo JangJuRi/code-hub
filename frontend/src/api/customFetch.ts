@@ -13,7 +13,7 @@ const customFetch = async <T>(endpoint: string, options: FetchOptions = {}): Pro
     const { method = 'GET', body, headers = {}, query = {} } = options;
 
     // 토큰 가져오기
-    const token = localStorage.getItem("token");
+    const accessToken = localStorage.getItem("accessToken");
 
     // query 객체가 있으면 URL에 쿼리 문자열을 추가
     const queryString = new URLSearchParams(query).toString();
@@ -26,7 +26,7 @@ const customFetch = async <T>(endpoint: string, options: FetchOptions = {}): Pro
         headers: {
             ...(body instanceof FormData ? {  } : { 'Content-Type': 'application/json' }),
             ...headers, // 다른 헤더가 있으면 추가
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
         },
         body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
         credentials: "include"
