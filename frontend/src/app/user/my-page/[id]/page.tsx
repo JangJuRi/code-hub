@@ -1,8 +1,33 @@
 "use client";
 
 import UtilPage from "@/components/user/my-page/UtilPage";
+import customFetch from "@/api/customFetch";
+import {use, useEffect, useState} from "react";
 
-export default function myPage() {
+export default function MyPage({ params }: { params: Promise<{ id: number }> }) {
+    const { id } = use(params);
+    const [userInfo, setUserInfo] = useState({
+        userName: '',
+        createdDate: '',
+        postCount: 0,
+        recommendCount: 0,
+        mainUtilCount: 0,
+        mainCodingTestCount: 0,
+    });
+
+    useEffect(() => {
+        loadUserInfo();
+    }, []);
+
+    const loadUserInfo = async () => {
+        const result= await customFetch(`/user/my-page/info/${id}/load`, {
+            method: 'GET'
+        })
+
+        if (result.success) {
+           setUserInfo(result.data);
+        }
+    }
 
     return (
         <div className="container py-4 my-page-container">
@@ -16,17 +41,17 @@ export default function myPage() {
                                 className="rounded-circle mb-3"
                                 style={{ width: "100px", height: "100px", objectFit: "cover" }}
                             />
-                            <h5 className="card-title text-center">username123</h5>
+                            <h5 className="card-title text-center">{userInfo.userName}</h5>
 
                             <div className="w-100 p-3">
                                 <p className="card-text mb-2 d-flex align-items-center">
-                                    <i className="bi bi-calendar-date me-2"></i>2023-06-01
+                                    <i className="bi bi-calendar-date me-2"></i>{userInfo.createdDate}
                                 </p>
                                 <p className="card-text mb-2 d-flex align-items-center">
-                                    <i className="bi bi-code-slash me-2"></i>12개
+                                    <i className="bi bi-code-slash me-2"></i>{userInfo.postCount}개
                                 </p>
                                 <p className="card-text d-flex align-items-center">
-                                    <i className="bi bi-hand-thumbs-up me-2"></i>35개
+                                    <i className="bi bi-hand-thumbs-up me-2"></i>{userInfo.recommendCount}개
                                 </p>
                             </div>
 
@@ -41,7 +66,7 @@ export default function myPage() {
                                 <div className="d-flex justify-content-center align-items-center px-2">
                                     <div className="text-center pe-5">
                                         <div className="fw-bold">유틸</div>
-                                        <div>0</div>
+                                        <div>{userInfo.mainUtilCount}</div>
                                     </div>
 
                                     {/* 세로 줄 */}
@@ -49,7 +74,7 @@ export default function myPage() {
 
                                     <div className="text-center ps-5">
                                         <div className="fw-bold">코테</div>
-                                        <div>0</div>
+                                        <div>{userInfo.mainCodingTestCount}</div>
                                     </div>
                                 </div>
                             </div>
