@@ -15,6 +15,7 @@ public interface UtilPostRepository extends JpaRepository<UtilPost, Long> {
     @Query(value = "select new com.jr.codeHub.api.user.utilPost.dto.UtilPostListDto(" +
                    "       upd.id" +
                    "     , :utilPostMasterId as masterId" +
+                   "     , upd.user.id as userId" +
                    "     , upd.content" +
                    "     , upd.user.accountId" +
                    "     , upd.utilPostLanguageType.languageType" +

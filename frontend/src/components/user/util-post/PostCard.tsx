@@ -2,10 +2,12 @@ import {Dropdown} from 'react-bootstrap';
 import PostModal from "@/components/user/util-post/PostModal";
 import {useState} from "react";
 import customFetch from "@/api/customFetch";
+import Link from "next/link";
 
 interface PostCardProps {
     id: number,
     masterId: number,
+    userId: number,
     accountId: string,
     languageType: string,
     content: string,
@@ -15,7 +17,7 @@ interface PostCardProps {
     reloadList: (isPostListOnly:boolean) => void;
 }
 
-export default function PostCard({id, masterId, accountId, content, topYn
+export default function PostCard({id, masterId, userId, accountId, content, topYn
                                  , recommendCount, recommendId, reloadList}: PostCardProps) {
     const [isModalOpen, setModalOpen] = useState(false);
 
@@ -56,7 +58,10 @@ export default function PostCard({id, masterId, accountId, content, topYn
                     {topYn === 'Y' &&
                         <i className="bi bi-award-fill text-warning me-2"></i>
                     }
-                    <strong>{accountId}</strong>
+
+                    <Link href={`/user/my-page/${userId}`}>
+                        <strong>{accountId}</strong>
+                    </Link>
                 </div>
 
                 <div className="d-flex align-items-center gap-2">

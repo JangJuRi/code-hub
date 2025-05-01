@@ -8,6 +8,7 @@ import lombok.Setter;
 public class UtilPostListDto {
     private Long id;
     private Long masterId;
+    private Long userId;
     private String content;
     private String accountId;
     private String languageType;
@@ -15,10 +16,11 @@ public class UtilPostListDto {
     private Long recommendCount;
     private Long recommendId;
 
-    public UtilPostListDto(Long id, Long masterId, String content, String accountId, String languageType
-                           , Character topYn, Long recommendCount, Long recommendId) {
+    public UtilPostListDto(Long id, Long masterId, Long userId, String content, String accountId
+            , String languageType, Character topYn, Long recommendCount, Long recommendId) {
         this.id = id;
         this.masterId = masterId;
+        this.userId = userId;
         this.content = content;
         this.accountId = accountId;
         this.languageType = languageType;

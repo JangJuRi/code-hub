@@ -26,6 +26,7 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
     type postItem = {
         id: number,
         masterId: number,
+        userId: number,
         accountId: string,
         languageType: string,
         content: string,
