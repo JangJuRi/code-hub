@@ -57,7 +57,7 @@ public class UtilPostService {
 
             utilPostRepository.save(utilPost);
 
-            updateTopYn(postDetailSaveDto.getId());
+            updateTopYn(utilPost.getId());
 
         } else {
             UtilPost utilPost = utilPostRepository.findById(postDetailSaveDto.getId()).get();
