@@ -1,12 +1,18 @@
 package com.jr.codeHub.api.user.myPage.service;
 
 import com.jr.codeHub.api.user.myPage.dto.MyPageInfoDto;
+import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
+import com.jr.codeHub.api.user.myPage.dto.PostListResponseDto;
 import com.jr.codeHub.api.user.user.repository.UserRepository;
-import com.jr.codeHub.api.user.utilPost.repository.UtilPostRecommendRepository;
+import com.jr.codeHub.api.user.utilPost.repository.UtilPostMasterRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostRepository;
 import com.jr.codeHub.entity.User;
 import com.jr.codeHub.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +22,7 @@ import java.util.Optional;
 public class MyPageService {
     private final UserRepository userRepository;
     private final UtilPostRepository utilPostRepository;
+    private final UtilPostMasterRepository utilPostMasterRepository;
 
     public ApiResponse loadMyPageUserInfo(Long userId) {
         User user = userRepository.findById(userId).get();
@@ -37,5 +44,12 @@ public class MyPageService {
         );
 
         return ApiResponse.ok(myPageInfoDto);
+    }
+
+    public ApiResponse loadMyPageUtilPagingList(Long userId, PagingRequestDto pagingRequestDto) {
+        Pageable pageable = PageRequest.of(pagingRequestDto.getNumber(), pagingRequestDto.getSize(), Sort.by(Sort.Direction.DESC, "id"));
+        Page<PostListResponseDto> list = utilPostMasterRepository.findUtilPostPagingListByUserId(userId, pageable);
+
+        return ApiResponse.ok(list);
     }
 }

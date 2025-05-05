@@ -1,9 +1,12 @@
 package com.jr.codeHub.api.user.utilPost.repository;
 
+import com.jr.codeHub.api.user.myPage.dto.PostListResponseDto;
 import com.jr.codeHub.api.user.utilPost.dto.UtilPostMasterListDto;
 import com.jr.codeHub.api.user.utilPost.dto.UtilPostMasterDetailDto;
 import com.jr.codeHub.api.user.utilPost.dto.UtilPostSearchFilterDto;
 import com.jr.codeHub.entity.UtilPostMaster;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -38,4 +41,15 @@ public interface UtilPostMasterRepository extends JpaRepository<UtilPostMaster, 
                    " where upm.id = :id"
     )
     UtilPostMasterDetailDto findUtilPostMasterDetail(Long id);
+
+    @Query("select new com.jr.codeHub.api.user.myPage.dto.PostListResponseDto(" +
+            "       upm.id" +
+            "     , upm.title" +
+            "     , COUNT(up)" +
+            ") " +
+            "  from UtilPostMaster upm" +
+            " inner join UtilPost up on up.utilPostMaster.id = upm.id" +
+            " where up.user.id = :userId" +
+            " group by upm.id, upm.title")
+    Page<PostListResponseDto> findUtilPostPagingListByUserId(Long userId, Pageable pageable);
 }

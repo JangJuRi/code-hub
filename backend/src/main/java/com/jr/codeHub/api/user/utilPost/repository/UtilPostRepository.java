@@ -63,9 +63,9 @@ public interface UtilPostRepository extends JpaRepository<UtilPost, Long> {
 
     Long countByUserId(Long userId);
 
-    @Query("select SUM(p.recommendCount) " +
-           "  from UtilPost p " +
-           " where p.user.id = :userId")
+    @Query("select SUM(up.recommendCount) " +
+           "  from UtilPost up " +
+           " where up.user.id = :userId")
     Long sumRecommendCountByUserId(Long userId);
 
     Long countByUserIdAndTopYn(Long userId, Character topYn);

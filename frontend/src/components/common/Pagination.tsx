@@ -22,21 +22,22 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
     return (
         <nav aria-label="페이지 네비게이션">
             <ul className="pagination justify-content-center">
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <li className={`page-item ${currentPage === 0 ? "disabled" : ""}`}>
                     <button
                         className="page-link bg-dark text-white border-secondary"
                         onClick={() => onPageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
+                        disabled={currentPage === 0}
                     >
                         이전
                     </button>
                 </li>
 
                 {getPageNumbers().map((page) => (
-                    <li key={page} className={`page-item ${page === currentPage ? "active" : ""}`}>
+                    <li key={page} className={`page-item ${page === (currentPage + 1) ? "active" : ""}`}>
                         <button
-                            className={`page-link ${page === currentPage ? "bg-secondary" : "bg-dark text-white"} border-secondary`}
-                            onClick={() => onPageChange(page)}
+                            className={`page-link ${page === (currentPage + 1) ? "bg-secondary" : "bg-dark text-white"} border-secondary`}
+                            onClick={() => onPageChange(page - 1)}
+                            disabled={(currentPage + 1) === page}
                         >
                             {page}
                         </button>
@@ -47,7 +48,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
                     <button
                         className="page-link bg-dark text-white border-secondary"
                         onClick={() => onPageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
+                        disabled={(currentPage + 1) === totalPages}
                     >
                         다음
                     </button>

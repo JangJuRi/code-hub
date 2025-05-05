@@ -20,7 +20,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
     }, []);
 
     const loadUserInfo = async () => {
-        const result= await customFetch(`/user/my-page/info/${id}/load`, {
+        const result = await customFetch(`/user/my-page/${id}/info/load`, {
             method: 'GET'
         })
 
@@ -83,7 +83,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                 </div>
 
                 <div className="col-md-9 h-100">
-                    <UtilPage/>
+                    <UtilPage userId={id}/>
                 </div>
             </div>
         </div>

@@ -1,9 +1,44 @@
 import Pagination from "@/components/common/Pagination";
+import {useEffect, useState} from "react";
+import customFetch from "@/api/customFetch";
 
-export default function UtilPage() {
+interface UtilPageProps {
+    userId?: number | null;
+}
 
-    const pageChange = () => {
+export default function UtilPage({ userId } : UtilPageProps) {
+    const [searchText, setSearchText] = useState("");
+    const [postList, setPostList] = useState([]);
+    const [paging, setPaging] = useState({
+        number: 0,
+        totalPages: 0,
+        size: 10
+    });
 
+    type postItem = {
+        utilPostMasterId: number,
+        title: string,
+        postCount: number
+    };
+
+    useEffect(() => {
+        loadList(0);
+    }, []);
+
+    const loadList = async (currentPage : number) => {
+        const result= await customFetch(`/user/my-page/${userId}/util-post/list/paging/load`, {
+            method: 'GET',
+            query: {
+                number: currentPage,
+                size: paging.size,
+                searchText: searchText
+            }
+        })
+
+        if (result.success) {
+            setPaging(result.data.page);
+            setPostList(result.data.content);
+        }
     }
 
     return (
@@ -23,25 +58,23 @@ export default function UtilPage() {
                     <div className="tab-pane fade show active" id="util"
                          aria-labelledby="util-tab">
                         <div className="list-group">
-                            <div
-                                className="list-group-item bg-secondary text-white d-flex justify-content-between">
-                                <strong>JSON 뷰어</strong>
-                                <small><i className="bi bi-pen me-1"></i>3</small>
-                            </div>
-                            <div
-                                className="list-group-item bg-secondary text-white d-flex justify-content-between">
-                                <strong>Base64 디코더</strong>
-                                <small><i className="bi bi-pen me-1"></i>3</small>
-                            </div>
+                            {postList.map((post:postItem) => (
+                                <div
+                                    key={post.utilPostMasterId}
+                                    className="list-group-item bg-secondary text-white d-flex justify-content-between">
+                                    <strong>{post.title}</strong>
+                                    <small><i className="bi bi-pen me-1"></i>{post.postCount}</small>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </div>
 
             <Pagination
-                currentPage={0}
-                totalPages={0}
-                onPageChange={pageChange}
+                currentPage={paging.number}
+                totalPages={paging.totalPages}
+                onPageChange={loadList}
             />
         </div>
     )
