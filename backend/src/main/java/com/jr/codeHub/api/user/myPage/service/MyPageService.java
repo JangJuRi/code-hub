@@ -52,7 +52,7 @@ public class MyPageService {
 
     public ApiResponse loadMyPageUtilPagingList(Long userId, PagingRequestDto pagingRequestDto) {
         Pageable pageable = PageRequest.of(pagingRequestDto.getNumber(), pagingRequestDto.getSize(), Sort.by(Sort.Direction.DESC, "id"));
-        Page<PostListResponseDto> list = utilPostMasterRepository.findUtilPostPagingListByUserId(userId, pageable);
+        Page<PostListResponseDto> list = utilPostMasterRepository.findUtilPostPagingListByUserId(userId, pagingRequestDto.getSearchText(), pageable);
 
         list.forEach(dto -> {
             List<UtilPostLanguageType> languageTypeList = utilPostLanguageTypeRepository.findAllByUtilPostMasterIdAndUserId(dto.getUtilPostMasterId(), userId);
