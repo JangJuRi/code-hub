@@ -1,6 +1,7 @@
 import Pagination from "@/components/common/Pagination";
 import {useEffect, useState} from "react";
 import customFetch from "@/api/customFetch";
+import Link from "next/link";
 
 interface UtilPageProps {
     userId?: number | null;
@@ -15,10 +16,17 @@ export default function UtilPage({ userId } : UtilPageProps) {
         size: 10
     });
 
+    type Language = {
+        languageType: string;
+        color: string;
+    };
+
     type postItem = {
         utilPostMasterId: number,
         title: string,
-        postCount: number
+        postCount: number,
+        topYn: string,
+        languages: Language[]
     };
 
     useEffect(() => {
@@ -59,12 +67,25 @@ export default function UtilPage({ userId } : UtilPageProps) {
                          aria-labelledby="util-tab">
                         <div className="list-group">
                             {postList.map((post:postItem) => (
-                                <div
-                                    key={post.utilPostMasterId}
-                                    className="list-group-item bg-secondary text-white d-flex justify-content-between">
-                                    <strong>{post.title}</strong>
-                                    <small><i className="bi bi-pen me-1"></i>{post.postCount}</small>
-                                </div>
+                                <Link href={`/user/util-post/detail/${post.utilPostMasterId}`}
+                                      key={post.utilPostMasterId}>
+                                    <div
+                                        className="list-group-item bg-secondary text-white d-flex justify-content-between">
+                                        <strong>{post.title}</strong>
+                                        <div className="language-container">
+                                            {post.languages?.map((language, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="language-circle"
+                                                    style={{ backgroundColor: language.color }} // 색상을 동적으로 적용
+                                                ></span>
+                                            ))}
+                                            <small className="ms-3">
+                                                <i className="bi bi-pen me-1"></i>{post.postCount}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                     </div>

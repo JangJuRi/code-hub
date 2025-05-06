@@ -49,6 +49,7 @@ public interface UtilPostMasterRepository extends JpaRepository<UtilPostMaster, 
             ") " +
             "  from UtilPostMaster upm" +
             " inner join UtilPost up on up.utilPostMaster.id = upm.id" +
+            "  left outer join UtilPostLanguageType uplt on up.utilPostLanguageType.id = uplt.id" +
             " where up.user.id = :userId" +
             " group by upm.id, upm.title")
     Page<PostListResponseDto> findUtilPostPagingListByUserId(Long userId, Pageable pageable);

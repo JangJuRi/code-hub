@@ -4,9 +4,11 @@ import com.jr.codeHub.api.user.myPage.dto.MyPageInfoDto;
 import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
 import com.jr.codeHub.api.user.myPage.dto.PostListResponseDto;
 import com.jr.codeHub.api.user.user.repository.UserRepository;
+import com.jr.codeHub.api.user.utilPost.repository.UtilPostLanguageTypeRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostMasterRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostRepository;
 import com.jr.codeHub.entity.User;
+import com.jr.codeHub.entity.UtilPostLanguageType;
 import com.jr.codeHub.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +26,7 @@ public class MyPageService {
     private final UserRepository userRepository;
     private final UtilPostRepository utilPostRepository;
     private final UtilPostMasterRepository utilPostMasterRepository;
+    private final UtilPostLanguageTypeRepository utilPostLanguageTypeRepository;
 
     public ApiResponse loadMyPageUserInfo(Long userId) {
         User user = userRepository.findById(userId).get();
@@ -49,6 +53,11 @@ public class MyPageService {
     public ApiResponse loadMyPageUtilPagingList(Long userId, PagingRequestDto pagingRequestDto) {
         Pageable pageable = PageRequest.of(pagingRequestDto.getNumber(), pagingRequestDto.getSize(), Sort.by(Sort.Direction.DESC, "id"));
         Page<PostListResponseDto> list = utilPostMasterRepository.findUtilPostPagingListByUserId(userId, pageable);
+
+        list.forEach(dto -> {
+            List<UtilPostLanguageType> languageTypeList = utilPostLanguageTypeRepository.findAllByUtilPostMasterIdAndUserId(dto.getUtilPostMasterId(), userId);
+            dto.setLanguages(languageTypeList);
+        });
 
         return ApiResponse.ok(list);
     }
