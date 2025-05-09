@@ -70,14 +70,17 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
         }
     }
 
-    const loadLanguageList = async () => {
+    const loadLanguageList = async (isLanguageSet:boolean = false) => {
         const result = await customFetch(`/user/util-post/language/list/${id}/load`, {
             method: 'GET'
         })
 
         if (result.success) {
             setLanguageList(result.data);
-            setLanguage(result.data[0]?.languageType);
+
+            if (isLanguageSet) {
+                setLanguage(result.data[0]?.languageType);
+            }
         }
     }
 
@@ -92,12 +95,14 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
             })
     }
 
-    const reloadList = async (isPostListOnly:boolean = false) => {
-        if (!isPostListOnly) {
-            await loadLanguageList();
-        }
+    const reloadList = async (isLanguageSet:boolean = false) => {
+        await loadLanguageList(isLanguageSet);
         await loadPostList();
         setModalOpen(false);
+    }
+
+    const settingLanguageType = (languageType : string) => {
+        setLanguage(languageType);
     }
 
     return (
@@ -176,10 +181,14 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
                 </div>
 
                 {postList.map((post:postItem) => (
-                    <PostCard key={post.id} {...post} reloadList={(isPostListOnly:boolean) => reloadList(isPostListOnly)}/>
+                    <PostCard key={`${post.id}-${post.recommendId}`} {...post}
+                              reloadList={(isPostListOnly:boolean) => reloadList(isPostListOnly)}
+                              settingLanguageType={(languageType:string) => settingLanguageType(languageType)}/>
                 ))}
 
-                {isModalOpen && <PostModal reloadList={() => reloadList()} masterId={id} />}
+                {isModalOpen && <PostModal reloadList={(isPostListOnly:boolean) => reloadList(isPostListOnly)}
+                                           settingLanguageType={(languageType:string) => settingLanguageType(languageType)}
+                                           masterId={id} />}
             </div>
         </div>
     );

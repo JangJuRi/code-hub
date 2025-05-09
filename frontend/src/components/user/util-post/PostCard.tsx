@@ -3,6 +3,7 @@ import PostModal from "@/components/user/util-post/PostModal";
 import {useState} from "react";
 import customFetch from "@/api/customFetch";
 import Link from "next/link";
+import Editor from "@monaco-editor/react";
 
 interface PostCardProps {
     id: number,
@@ -15,14 +16,15 @@ interface PostCardProps {
     recommendCount: number,
     recommendId: number,
     reloadList: (isPostListOnly:boolean) => void;
+    settingLanguageType: (languageType: string) => void;
 }
 
-export default function PostCard({id, masterId, userId, accountId, content, topYn
-                                 , recommendCount, recommendId, reloadList}: PostCardProps) {
+export default function PostCard({id, masterId, userId, accountId, languageType, content, topYn
+                                 , recommendCount, recommendId, reloadList, settingLanguageType}: PostCardProps) {
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const onClose = () => {
-        reloadList(false);
+    const onClose = (isLanguageReload: boolean = false) => {
+        reloadList(isLanguageReload);
         setModalOpen(false);
     }
 
@@ -36,7 +38,7 @@ export default function PostCard({id, masterId, userId, accountId, content, topY
 
         if (result.success) {
             alert("삭제되었습니다.");
-            onClose();
+            onClose(true);
         }
     }
 
@@ -47,8 +49,12 @@ export default function PostCard({id, masterId, userId, accountId, content, topY
         })
 
         if (result.success) {
-            reloadList(true);
+            reloadList(false);
         }
+    }
+
+    const settingLanguageTypeToParentPage = (languageType : string) => {
+        settingLanguageType(languageType);
     }
 
     return (
@@ -84,9 +90,28 @@ export default function PostCard({id, masterId, userId, accountId, content, topY
                     </Dropdown>
                 </div>
             </div>
-{}
-            <pre>{content}</pre>
-            {isModalOpen && <PostModal reloadList={() => onClose()} detailId={id} masterId={masterId}/>}
+
+            <Editor
+                key={id}
+                height="200px"
+                language={languageType}
+                theme="vs-dark"
+                value={content}
+                options={{
+                    fontSize: 15,
+                    minimap: { enabled: false },
+                    automaticLayout: true,
+                    formatOnType: true,
+                    formatOnPaste: true,
+                    autoIndent: 'full',
+                    scrollBeyondLastLine: false,
+                    readOnly: true,
+                }}
+            />
+            {isModalOpen && <PostModal reloadList={() => onClose()}
+                                       settingLanguageType={(languageType:string) => settingLanguageTypeToParentPage(languageType)}
+                                       detailId={id}
+                                       masterId={masterId}/>}
         </div>
     );
 }

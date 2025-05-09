@@ -138,12 +138,15 @@ public class UtilPostService {
 
     private void updateTopYn(Long utilPostId) {
         UtilPostTopYnUpdateDto utilPostLanguageTypeDto = utilPostRepository.findTopYnUpdateInfoById(utilPostId);
-        utilPostRepository.resetAllTopYn(utilPostLanguageTypeDto.getUtilPostMasterId(), utilPostLanguageTypeDto.getUtilPostLanguageType());
-        UtilPost utilPost = utilPostRepository.findFirstByUtilPostMasterIdAndUtilPostLanguageTypeLanguageTypeOrderByRecommendCountDescCreatedAtAsc(utilPostLanguageTypeDto.getUtilPostMasterId(), utilPostLanguageTypeDto.getUtilPostLanguageType());
 
-        if (utilPost != null) {
-            utilPost.setTopYn('Y');
-            utilPostRepository.save(utilPost);
+        if (utilPostLanguageTypeDto != null) {
+            utilPostRepository.resetAllTopYn(utilPostLanguageTypeDto.getUtilPostMasterId(), utilPostLanguageTypeDto.getUtilPostLanguageType());
+            UtilPost utilPost = utilPostRepository.findFirstByUtilPostMasterIdAndUtilPostLanguageTypeLanguageTypeOrderByRecommendCountDescCreatedAtAsc(utilPostLanguageTypeDto.getUtilPostMasterId(), utilPostLanguageTypeDto.getUtilPostLanguageType());
+
+            if (utilPost != null) {
+                utilPost.setTopYn('Y');
+                utilPostRepository.save(utilPost);
+            }
         }
     }
 }

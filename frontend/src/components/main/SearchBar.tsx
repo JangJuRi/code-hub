@@ -6,8 +6,13 @@ interface SearchBarProps {
     updateFilter: (key: string, value: string) => void
 }
 
-const SearchBar = ({filter, updateFilter}: SearchBarProps) => {
+const SearchBar = ({updateFilter}: SearchBarProps) => {
     const [list, setList] = useState([]);
+
+    type tagItem = {
+        languageType: string;
+        color: string;
+    };
 
     useEffect(() => {
         loadTagList();
@@ -40,7 +45,7 @@ const SearchBar = ({filter, updateFilter}: SearchBarProps) => {
                       onClick={(e) => updateFilter('languageType', '')}>
                     전체
                 </span>
-                {list.map((tag, index) => (
+                {list.map((tag : tagItem, index) => (
                     <span key={index} className="tag" style={{background: tag.color}}
                           onClick={(e) => updateFilter('languageType', tag.languageType)}>
                         {tag.languageType}

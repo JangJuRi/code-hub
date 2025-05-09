@@ -5,12 +5,13 @@ import customFetch from "@/api/customFetch";
 import {useEffect, useState} from "react";
 
 interface PostModalProps {
-    reloadList: () => void;
-    detailId?: number | null;
-    masterId?: number | null;
+    reloadList: (isPostListOnly:boolean) => void;
+    detailId?: number | null,
+    masterId?: number | null,
+    settingLanguageType: (languageType: string) => void;
 }
 
-export default function PostModal({ reloadList, detailId, masterId }: PostModalProps) {
+export default function PostModal({reloadList, detailId, masterId, settingLanguageType}: PostModalProps) {
     const [selectLanguageList, setSelectLanguageList] = useState<LanguageItem[]>([]);
     const [selectLanguage, setSelectLanguage] = useState("java");  // 언어 상태 관리
     const [codeDetail, setCodeDetail] = useState('// 여기에 코드를 작성하세요.');
@@ -29,7 +30,7 @@ export default function PostModal({ reloadList, detailId, masterId }: PostModalP
     }, []);
 
     const loadPostDetail = async () => {
-        const result= await customFetch(`/user/util-post/detail/${detailId}/load`, {
+        const result = await customFetch(`/user/util-post/detail/${detailId}/load`, {
             method: 'GET'
         })
 
@@ -40,6 +41,7 @@ export default function PostModal({ reloadList, detailId, masterId }: PostModalP
 
             if (detailId) {
                 setSelectLanguageList([{languageType: data.languageType, color: data.color}]);
+                setSelectLanguage(data.languageType);
             }
         }
     }
@@ -59,7 +61,7 @@ export default function PostModal({ reloadList, detailId, masterId }: PostModalP
     };
 
     const saveCode = async () => {
-        const result= await customFetch('/user/util-post/merge', {
+        const result = await customFetch('/user/util-post/merge', {
             method: 'POST',
             body: {
                 id: detailId,
@@ -71,12 +73,13 @@ export default function PostModal({ reloadList, detailId, masterId }: PostModalP
 
         if (result.success) {
             alert("저장되었습니다.");
-            onClose();
+            await onClose();
+            settingLanguageType(selectLanguage);
         }
     }
 
-    const onClose = () => {
-        reloadList();
+    const onClose = async (isLanguageReload: boolean = false) => {
+        await reloadList(isLanguageReload);
     }
 
     return (
@@ -97,7 +100,7 @@ export default function PostModal({ reloadList, detailId, masterId }: PostModalP
                                 </button>
                             ))}
                         </div>
-                        <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
+                        <button type="button" className="btn-close btn-close-white" onClick={() => onClose()}></button>
                     </div>
 
                     <div className="modal-body">
@@ -116,7 +119,7 @@ export default function PostModal({ reloadList, detailId, masterId }: PostModalP
                     </div>
 
                     <div className="modal-footer">
-                        <button type='button' className="btn btn-light" onClick={onClose}>닫기</button>
+                        <button type='button' className="btn btn-light" onClick={() => onClose()}>닫기</button>
                         <button type='button' className="btn btn-primary" onClick={saveCode}>저장</button>
                     </div>
                 </div>
