@@ -83,7 +83,22 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                 </div>
 
                 <div className="col-md-9 h-100">
-                    <UtilPage userId={id}/>
+                    <div className="card bg-dark text-white h-100">
+                        <div className="card-body">
+                            <ul className="nav nav-tabs d-flex justify-content-between align-items-center mb-3" id="mypageTab" role="tablist">
+                                <div className="d-flex">
+                                    <li className="nav-item" role="presentation">
+                                        <button className="nav-link active" id="util-tab" data-bs-toggle="tab"
+                                                data-bs-target="#util" type="button" role="tab" aria-controls="util"
+                                                aria-selected="true">
+                                            유틸
+                                        </button>
+                                    </li>
+                                </div>
+                            </ul>
+                            <UtilPage userId={id}/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
