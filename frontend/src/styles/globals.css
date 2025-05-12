@@ -216,3 +216,33 @@ a {
 .modal-content {
     border: 5px double #7a7a7a;
 }
+
+.nav-link {
+    color: white;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: var(--primary-hover);
+    font-weight: bold;
+}
+
+.speech-bubble-left {
+    left: -10px;
+    top: 15px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid #f8f9fa;
+}
+
+.speech-bubble-right {
+    right: -10px;
+    top: 15px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #0d6efd;
+}

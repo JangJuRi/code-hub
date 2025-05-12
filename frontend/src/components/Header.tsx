@@ -6,7 +6,7 @@ import useAuth from "@/hooks/useAuth";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { authenticated, userId, username, logout } = useAuth();
+    const { authenticated, loginUserId, loginUserName, logout } = useAuth();
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
@@ -33,7 +33,7 @@ const Header = () => {
                     { authenticated &&
                         <>
                             <li className="nav-item">
-                                <Link className="nav-link" href={`/user/my-page/${userId}`}>{username}님</Link>
+                                <Link className="nav-link" href={`/user/my-page/${loginUserId}`}>{loginUserName}님</Link>
                             </li>
                             <li className="nav-item">
                                 <button className="nav-link" onClick={logout}>로그아웃</button>

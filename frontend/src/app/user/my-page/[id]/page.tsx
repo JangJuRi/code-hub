@@ -3,6 +3,7 @@
 import UtilPage from "@/components/user/my-page/UtilPage";
 import customFetch from "@/api/customFetch";
 import {use, useEffect, useState} from "react";
+import QnAPage from "@/components/user/my-page/QnAPage";
 
 export default function MyPage({ params }: { params: Promise<{ id: number }> }) {
     const { id } = use(params);
@@ -14,6 +15,12 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
         mainUtilCount: 0,
         mainCodingTestCount: 0,
     });
+
+    const [currentTab, setCurrentTab] = useState(0);
+    const tabList = [
+        { code: 'util', name: '유틸' },
+        { code: 'qna', name: 'QnA' }
+    ]
 
     useEffect(() => {
         loadUserInfo();
@@ -87,16 +94,28 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                         <div className="card-body">
                             <ul className="nav nav-tabs d-flex justify-content-between align-items-center mb-3" id="mypageTab" role="tablist">
                                 <div className="d-flex">
-                                    <li className="nav-item" role="presentation">
-                                        <button className="nav-link active" id="util-tab" data-bs-toggle="tab"
-                                                data-bs-target="#util" type="button" role="tab" aria-controls="util"
-                                                aria-selected="true">
-                                            유틸
-                                        </button>
-                                    </li>
+                                    {tabList.map((tab, index) => (
+                                        <li className="nav-item" role="presentation" key={index}>
+                                            <button className={`nav-link ${index === (currentTab) ? "active" : ""}`}
+                                                    id={`${tab.code}-tab`}
+                                                    type="button"
+                                                    role="tab"
+                                                    data-bs-toggle="tab"
+                                                    data-bs-target={`#${tab.code}`}
+                                                    aria-controls={tab.code}
+                                                    aria-selected={index === currentTab ? 'true' : 'false'}
+                                                    onClick={() => setCurrentTab(index)}>
+                                                {tab.name}
+                                            </button>
+                                        </li>
+                                    ))}
                                 </div>
                             </ul>
-                            <UtilPage userId={id}/>
+
+                            <div className="tab-content flex-grow-1 d-flex flex-column" style={{ height: '95%' }} id="mypageTabContent">
+                                { currentTab === 0 && <UtilPage userId={id}/>}
+                                { currentTab === 1 && <QnAPage userId={id}/>}
+                            </div>
                         </div>
                     </div>
                 </div>

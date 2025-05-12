@@ -7,8 +7,8 @@ import {useRouter} from "next/navigation";
 
 interface AuthContextType {
     authenticated: boolean;
-    userId: number | null;
-    username: string | null;
+    loginUserId: number | null;
+    loginUserName: string | null;
     login: (accessToken: FormData) => void;
     logout: () => void;
     authCheck: () => void;
@@ -19,8 +19,8 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
     const [authenticated, setAuthenticated] = useState(false);
-    const [userId, setUserId] = useState<number | null>(null);
-    const [username, setUsername] = useState<string | null>(null);
+    const [loginUserId, setLoginUserId] = useState<number | null>(null);
+    const [loginUserName, setLoginUserName] = useState<string | null>(null);
 
     useEffect(() => {
         const accessToken = localStorage.getItem("accessToken");
@@ -29,8 +29,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const decoded: any = jwtDecode(accessToken);
                 setAuthenticated(true);
-                setUserId(decoded.sub);
-                setUsername(decoded?.accountId || "anonymousUser");
+                setLoginUserId(decoded.sub);
+                setLoginUserName(decoded?.accountId || "anonymousUser");
             } catch (error) {
                 console.error("토큰 디코딩 실패", error);
                 logout();
@@ -83,19 +83,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.setItem("accessToken", accessToken);
             const decoded: any = jwtDecode(accessToken);
             setAuthenticated(true);
-            setUserId(decoded.sub);
-            setUsername(decoded?.accountId || 'anonymousUser');
+            setLoginUserId(decoded.sub);
+            setLoginUserName(decoded?.accountId || 'anonymousUser');
 
         } else {
             localStorage.removeItem("accessToken");
             setAuthenticated(false);
-            setUserId(null);
-            setUsername(null);
+            setLoginUserId(null);
+            setLoginUserName(null);
         }
     }
 
     return (
-            <AuthContext.Provider value={{ authenticated, userId, username, login, logout, authCheck }}>
+            <AuthContext.Provider value={{ authenticated, loginUserId, loginUserName, login, logout, authCheck }}>
                 {children}
             </AuthContext.Provider>
     );
