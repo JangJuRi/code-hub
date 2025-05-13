@@ -37,7 +37,7 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
 
     useEffect(() => {
         loadMasterDetail();
-        loadLanguageList();
+        loadLanguageList(true);
     }, []);
 
     useEffect(() => {
