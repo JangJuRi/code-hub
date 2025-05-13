@@ -45,29 +45,36 @@ export default function ChatRoomListPage({ userId }: ChatRoomListPageProps) {
             id="chat"
             aria-labelledby="chat-tab"
         >
-            <div className="list-group">
-                {roomList.map((room: roomItem) => (
-                    <div className="list-group-item list-group-item-action d-flex align-items-center gap-3 m-1"
-                         key={room.roomId}
-                         style={{ cursor: 'pointer' }}
-                         onClick={() => handleRoomClick(room.roomId)}>
-                        <img
-                            src="/images/profile.png"
-                            alt="프로필 사진"
-                            className="rounded-circle"
-                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                        />
-                        <div className="flex-grow-1">
-                            <div className="d-flex justify-content-between">
-                                <strong>{ room.accountId }</strong>
+            {roomList.length === 0 ? (
+                <div className="w-100 text-center text-white-50 py-5" style={{ minHeight: "310px" }}>
+                    <i className="bi bi-exclamation-circle fs-3 d-block mb-2"></i>
+                    <div>채팅 내역이 없습니다</div>
+                </div>
+            ) : (
+                <div className="list-group">
+                    {roomList.map((room: roomItem) => (
+                        <div className="list-group-item list-group-item-action d-flex align-items-center gap-3 m-1"
+                             key={room.roomId}
+                             style={{ cursor: 'pointer' }}
+                             onClick={() => handleRoomClick(room.roomId)}>
+                            <img
+                                src="/images/profile.png"
+                                alt="프로필 사진"
+                                className="rounded-circle"
+                                style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                            />
+                            <div className="flex-grow-1">
+                                <div className="d-flex justify-content-between">
+                                    <strong>{ room.accountId }</strong>
+                                </div>
+                                <p className="mb-0 text-truncate" style={{ maxWidth: '100%'}}>
+                                    { room.content }
+                                </p>
                             </div>
-                            <p className="mb-0 text-truncate" style={{ maxWidth: '100%'}}>
-                                { room.content }
-                            </p>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+                )}
         </div>
 
     )

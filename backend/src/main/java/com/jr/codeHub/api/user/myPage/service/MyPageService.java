@@ -88,7 +88,23 @@ public class MyPageService {
         Long user2Id = chatUserId < loginUser.getId() ? loginUser.getId() : chatUserId;
 
         ChatRoom room = chatRoomRepository.findByUser1IdAndUser2Id(user1Id, user2Id);
-        return ApiResponse.ok(room.getId());
+        Long chatRoomId = 0L;
+
+        // 기존 채팅방이 없을 시 새로 생성
+        if (room == null) {
+            ChatRoom newRoom = new ChatRoom(
+                    userRepository.findById(user1Id).get(),
+                    userRepository.findById(user2Id).get()
+            );
+
+            chatRoomRepository.save(newRoom);
+            chatRoomId = newRoom.getId();
+
+        } else {
+            chatRoomId = room.getId();
+        }
+
+        return ApiResponse.ok(chatRoomId);
     }
 
     public ChatMessageListResponseDto addMessage(String roomId, ChatMessage message, Principal principal) {

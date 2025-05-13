@@ -25,4 +25,9 @@ public class ChatRoom extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user2_id", nullable = false)
     private User user2;
+
+    public ChatRoom(User user1, User user2) {
+        this.user1 = user1;
+        this.user2 = user2;
+    }
 }
