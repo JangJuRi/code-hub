@@ -3,56 +3,64 @@
 import React, {useEffect, useState} from 'react';
 import useAuth from "@/hooks/useAuth";
 import customFetch from "@/api/customFetch";
+import {useStomp} from "@/hooks/useStomp";
 
 interface ChatPageProps {
-    roomId?: number | null;
+    roomId?: number;
     userId?: number | null;
     onBack?: () => void;
-}
-
-interface QA {
-    id: number;
-    questioner: string;
-    question: string;
-    answerer?: string;
-    answer?: string;
 }
 
 export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
     const { loginUserId } = useAuth();
     const [input, setInput] = useState('');
-    const [messageList, setMessageList] = useState([]);
-    const [qnaList, setQnaList] = useState<QA[]>([
-        { id: 1, questioner: '사용자123', question: '이 사이트는 어떤 기술로 만들었나요?', answerer: '작성자', answer: 'React, Next.js, Spring Boot를 사용했습니다.' },
-        { id: 2, questioner: '사용자123', question: '프론트 프레임워크는 뭔가요?' },
-        { id: 3, questioner: '사용자123', question: 'API는 REST인가요?', answerer: '작성자', answer: '네, RESTful하게 구성되어 있습니다.' },
-    ]);
+    const [messageList, setMessageList] = useState<messageItem[]>([]);
+    const [roomIdState, setRoomIdState] = useState();
 
     type messageItem = {
-        messageId: number,
-        accountId: string,
-        userId: number,
-        content: string,
-        createdAt: string
+        roomId: number;
+        messageId: number;
+        accountId: string;
+        userId: number;
+        content: string;
+        createdAt: string;
     };
 
-
+    // 1. roomIdState 설정 및 메시지 로드
     useEffect(() => {
-        loadChatMessageList();
-    }, []);
+        const loadData = async () => {
+            const id = roomId ? roomId : await loadRoomId();
+            setRoomIdState(id);
+        };
+        loadData();
+    }, [roomId]);
 
+    // 2. roomIdState가 설정되었을 때 메시지 목록 불러오기
+    useEffect(() => {
+        if (roomIdState) {
+            loadChatMessageList();
+        }
+    }, [roomIdState]);
+
+    // 3. 소켓 연결 후 메시지 받기 (roomIdState가 설정된 후에 연결)
+    const stomp = useStomp(roomIdState ?? 0, (msg: messageItem) => {
+        setMessageList((prev) => [...prev, msg]);
+    });
+
+    // 4. 채팅 메시지 목록 불러오기
     const loadChatMessageList = async () => {
-        const roomIdValue = roomId ? roomId : await loadRoomId();
+        if (!roomIdState) return;
 
-        const result = await customFetch(`/user/my-page/chat/${roomIdValue}/message-list/load`, {
+        const result = await customFetch(`/user/my-page/chat/${roomIdState}/message-list/load`, {
             method: 'GET'
-        })
+        });
 
         if (result.success) {
             setMessageList(result.data);
         }
-    }
+    };
 
+    // 5. 방 ID 불러오기
     const loadRoomId = async () => {
         if (userId) {
             const result = await customFetch(`/user/my-page/chat/room-id/load`, {
@@ -60,22 +68,29 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
                 query: {
                     chatUserId: userId
                 }
-            })
+            });
 
             if (result.success) {
                 return result.data;
             }
         }
-    }
+    };
 
+    // 메시지 전송
     const handleSubmit = () => {
-        if (input.trim() === '') return;
-        const newQA: QA = {
-            id: qnaList.length + 1,
-            questioner: '익명',
-            question: input,
+        if (!input.trim() || !roomIdState || !loginUserId) return;
+
+        const msg = {
+            roomId: roomIdState, // roomIdState를 사용
+            messageId: 0,
+            accountId: '',
+            userId: loginUserId,
+            content: input,
+            createdAt: new Date().toISOString(),
         };
-        setQnaList([...qnaList, newQA]);
+
+        // 소켓으로 메시지 전송
+        stomp?.sendMessage(msg); // 여기서 stomp를 통해 메시지 전송
         setInput('');
     };
 

@@ -1,10 +1,18 @@
 package com.jr.codeHub.api.user.myPage.controller;
 
+import com.jr.codeHub.api.user.myPage.dto.ChatMessageListResponseDto;
 import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
 import com.jr.codeHub.api.user.myPage.service.MyPageService;
+import com.jr.codeHub.entity.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +41,14 @@ public class MyPageController {
     }
 
     @GetMapping("/user/my-page/chat/room-id/load")
-    public ResponseEntity<?> loadChatRoomList(@RequestParam("chatUserId") Long chatUserId) {
-        return ResponseEntity.ok(myPageService.loadChatRoomList(chatUserId));
+    public ResponseEntity<?> loadChatRoomId(@RequestParam("chatUserId") Long chatUserId) {
+        return ResponseEntity.ok(myPageService.loadChatRoomId(chatUserId));
+    }
+
+    @MessageMapping("/chat.send.{roomId}")
+    @SendTo("/topic/room/{roomId}")
+    public ChatMessageListResponseDto sendMessage(@DestinationVariable String roomId, @Payload ChatMessage message, Principal principal) {
+        ChatMessageListResponseDto savedMessage = myPageService.addMessage(roomId, message, principal);
+        return savedMessage;
     }
 }

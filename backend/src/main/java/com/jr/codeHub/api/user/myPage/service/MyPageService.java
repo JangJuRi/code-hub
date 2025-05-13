@@ -8,6 +8,7 @@ import com.jr.codeHub.api.user.user.service.UserService;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostLanguageTypeRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostMasterRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostRepository;
+import com.jr.codeHub.entity.ChatMessage;
 import com.jr.codeHub.entity.ChatRoom;
 import com.jr.codeHub.entity.User;
 import com.jr.codeHub.entity.UtilPostLanguageType;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,12 +82,29 @@ public class MyPageService {
         return ApiResponse.ok(messageList);
     }
 
-    public ApiResponse loadChatRoomList(Long chatUserId) {
+    public ApiResponse loadChatRoomId(Long chatUserId) {
         User loginUser = userService.getLoginUser();
         Long user1Id = chatUserId < loginUser.getId() ? chatUserId : loginUser.getId();
         Long user2Id = chatUserId < loginUser.getId() ? loginUser.getId() : chatUserId;
 
         ChatRoom room = chatRoomRepository.findByUser1IdAndUser2Id(user1Id, user2Id);
         return ApiResponse.ok(room.getId());
+    }
+
+    public ChatMessageListResponseDto addMessage(String roomId, ChatMessage message, Principal principal) {
+        User loginUser = userRepository.findById(Long.valueOf(principal.getName())).get();
+        ChatRoom room = chatRoomRepository.findById(Long.valueOf(roomId)).get();
+
+        message.setSendUser(loginUser);
+        message.setRoom(room);
+        chatMessageRepository.save(message);
+
+        return new ChatMessageListResponseDto(
+                message.getId(),
+                message.getSendUser().getAccountId(),
+                message.getSendUser().getId(),
+                message.getContent(),
+                message.getCreatedAt()
+        );
     }
 }

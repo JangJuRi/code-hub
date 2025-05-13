@@ -6,11 +6,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 
 @Component
@@ -81,5 +84,17 @@ public class JwtUtil {
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         return (bearerToken != null && bearerToken.startsWith("Bearer ")) ? bearerToken.substring(7) : null;
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        String userId = claims.getSubject();
+
+        return new UsernamePasswordAuthenticationToken(userId, "", Collections.emptyList());
     }
 }
