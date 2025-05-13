@@ -21,4 +21,9 @@ public class MyPageController {
                                                       @ModelAttribute PagingRequestDto pagingRequestDto) {
         return ResponseEntity.ok(myPageService.loadMyPageUtilPagingList(userId, pagingRequestDto));
     }
+
+    @GetMapping("/user/my-page/chat/room-list/load")
+    public ResponseEntity<?> loadMyPageChatRoomList() {
+        return ResponseEntity.ok(myPageService.loadMyPageChatRoomList());
+    }
 }

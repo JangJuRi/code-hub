@@ -1,9 +1,12 @@
 package com.jr.codeHub.api.user.myPage.service;
 
+import com.jr.codeHub.api.user.chat.repository.ChatRoomRepository;
+import com.jr.codeHub.api.user.myPage.dto.ChatRoomListResponseDto;
 import com.jr.codeHub.api.user.myPage.dto.MyPageInfoDto;
 import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
 import com.jr.codeHub.api.user.myPage.dto.PostListResponseDto;
 import com.jr.codeHub.api.user.user.repository.UserRepository;
+import com.jr.codeHub.api.user.user.service.UserService;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostLanguageTypeRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostMasterRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostRepository;
@@ -23,10 +26,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
+    private final UserService userService;
     private final UserRepository userRepository;
     private final UtilPostRepository utilPostRepository;
     private final UtilPostMasterRepository utilPostMasterRepository;
     private final UtilPostLanguageTypeRepository utilPostLanguageTypeRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public ApiResponse loadMyPageUserInfo(Long userId) {
         User user = userRepository.findById(userId).get();
@@ -60,5 +65,12 @@ public class MyPageService {
         });
 
         return ApiResponse.ok(list);
+    }
+
+    public ApiResponse loadMyPageChatRoomList() {
+        User loginUser = userService.getLoginUser();
+        List<ChatRoomListResponseDto> roomList = chatRoomRepository.findChatRoomListByUserId(loginUser.getId());
+
+        return ApiResponse.ok(roomList);
     }
 }

@@ -3,10 +3,13 @@
 import UtilPage from "@/components/user/my-page/UtilPage";
 import customFetch from "@/api/customFetch";
 import {use, useEffect, useState} from "react";
-import QnAPage from "@/components/user/my-page/QnAPage";
+import ChatPage from "@/components/user/my-page/ChatPage";
+import useAuth from "@/hooks/useAuth";
+import ChatRoomListPage from "@/components/user/my-page/ChatRoomListPage";
 
 export default function MyPage({ params }: { params: Promise<{ id: number }> }) {
     const { id } = use(params);
+    const { loginUserId } = useAuth();
     const [userInfo, setUserInfo] = useState({
         userName: '',
         createdDate: '',
@@ -19,7 +22,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
     const [currentTab, setCurrentTab] = useState(0);
     const tabList = [
         { code: 'util', name: '유틸' },
-        { code: 'qna', name: 'QnA' }
+        { code: 'chat', name: '채팅' }
     ]
 
     useEffect(() => {
@@ -114,7 +117,8 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
 
                             <div className="tab-content flex-grow-1 d-flex flex-column" style={{ height: '95%' }} id="mypageTabContent">
                                 { currentTab === 0 && <UtilPage userId={id}/>}
-                                { currentTab === 1 && <QnAPage userId={id}/>}
+                                { currentTab === 1 && loginUserId === id && <ChatRoomListPage userId={id}/>} {/* 채팅방 리스트 페이지 */}
+                                { currentTab === 1 && loginUserId !== id && <ChatPage userId={id}/>} {/* 채팅 페이지 */}
                             </div>
                         </div>
                     </div>
