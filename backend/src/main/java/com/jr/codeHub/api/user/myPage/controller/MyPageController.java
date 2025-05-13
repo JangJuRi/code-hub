@@ -26,4 +26,14 @@ public class MyPageController {
     public ResponseEntity<?> loadMyPageChatRoomList() {
         return ResponseEntity.ok(myPageService.loadMyPageChatRoomList());
     }
+
+    @GetMapping("/user/my-page/chat/{roomId}/message-list/load")
+    public ResponseEntity<?> loadMyPageChatMessageList(@PathVariable("roomId") Long roomId) {
+        return ResponseEntity.ok(myPageService.loadMyPageChatMessageList(roomId));
+    }
+
+    @GetMapping("/user/my-page/chat/room-id/load")
+    public ResponseEntity<?> loadChatRoomList(@RequestParam("chatUserId") Long chatUserId) {
+        return ResponseEntity.ok(myPageService.loadChatRoomList(chatUserId));
+    }
 }

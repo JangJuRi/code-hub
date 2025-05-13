@@ -1,15 +1,14 @@
 package com.jr.codeHub.api.user.myPage.service;
 
+import com.jr.codeHub.api.user.chat.repository.ChatMessageRepository;
 import com.jr.codeHub.api.user.chat.repository.ChatRoomRepository;
-import com.jr.codeHub.api.user.myPage.dto.ChatRoomListResponseDto;
-import com.jr.codeHub.api.user.myPage.dto.MyPageInfoDto;
-import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
-import com.jr.codeHub.api.user.myPage.dto.PostListResponseDto;
+import com.jr.codeHub.api.user.myPage.dto.*;
 import com.jr.codeHub.api.user.user.repository.UserRepository;
 import com.jr.codeHub.api.user.user.service.UserService;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostLanguageTypeRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostMasterRepository;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostRepository;
+import com.jr.codeHub.entity.ChatRoom;
 import com.jr.codeHub.entity.User;
 import com.jr.codeHub.entity.UtilPostLanguageType;
 import com.jr.codeHub.util.ApiResponse;
@@ -32,6 +31,7 @@ public class MyPageService {
     private final UtilPostMasterRepository utilPostMasterRepository;
     private final UtilPostLanguageTypeRepository utilPostLanguageTypeRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     public ApiResponse loadMyPageUserInfo(Long userId) {
         User user = userRepository.findById(userId).get();
@@ -72,5 +72,20 @@ public class MyPageService {
         List<ChatRoomListResponseDto> roomList = chatRoomRepository.findChatRoomListByUserId(loginUser.getId());
 
         return ApiResponse.ok(roomList);
+    }
+
+    public ApiResponse loadMyPageChatMessageList(Long roomId) {
+        List<ChatMessageListResponseDto> messageList = chatMessageRepository.findChatMessageListByRoomId(roomId);
+
+        return ApiResponse.ok(messageList);
+    }
+
+    public ApiResponse loadChatRoomList(Long chatUserId) {
+        User loginUser = userService.getLoginUser();
+        Long user1Id = chatUserId < loginUser.getId() ? chatUserId : loginUser.getId();
+        Long user2Id = chatUserId < loginUser.getId() ? loginUser.getId() : chatUserId;
+
+        ChatRoom room = chatRoomRepository.findByUser1IdAndUser2Id(user1Id, user2Id);
+        return ApiResponse.ok(room.getId());
     }
 }

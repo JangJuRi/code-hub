@@ -28,4 +28,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "    or cr.user2_id = :userId"
     , nativeQuery = true)
     List<ChatRoomListResponseDto> findChatRoomListByUserId(Long userId);
+
+    ChatRoom findByUser1IdAndUser2Id(Long user1Id, Long user2Id);
 }

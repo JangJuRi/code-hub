@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import useAuth from "@/hooks/useAuth";
+import customFetch from "@/api/customFetch";
 
 interface ChatPageProps {
     roomId?: number | null;
@@ -19,13 +20,53 @@ interface QA {
 
 export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
     const { loginUserId } = useAuth();
+    const [input, setInput] = useState('');
+    const [messageList, setMessageList] = useState([]);
     const [qnaList, setQnaList] = useState<QA[]>([
         { id: 1, questioner: '사용자123', question: '이 사이트는 어떤 기술로 만들었나요?', answerer: '작성자', answer: 'React, Next.js, Spring Boot를 사용했습니다.' },
         { id: 2, questioner: '사용자123', question: '프론트 프레임워크는 뭔가요?' },
         { id: 3, questioner: '사용자123', question: 'API는 REST인가요?', answerer: '작성자', answer: '네, RESTful하게 구성되어 있습니다.' },
     ]);
 
-    const [input, setInput] = useState('');
+    type messageItem = {
+        messageId: number,
+        accountId: string,
+        userId: number,
+        content: string,
+        createdAt: string
+    };
+
+
+    useEffect(() => {
+        loadChatMessageList();
+    }, []);
+
+    const loadChatMessageList = async () => {
+        const roomIdValue = roomId ? roomId : await loadRoomId();
+
+        const result = await customFetch(`/user/my-page/chat/${roomIdValue}/message-list/load`, {
+            method: 'GET'
+        })
+
+        if (result.success) {
+            setMessageList(result.data);
+        }
+    }
+
+    const loadRoomId = async () => {
+        if (userId) {
+            const result = await customFetch(`/user/my-page/chat/room-id/load`, {
+                method: 'GET',
+                query: {
+                    chatUserId: userId
+                }
+            })
+
+            if (result.success) {
+                return result.data;
+            }
+        }
+    }
 
     const handleSubmit = () => {
         if (input.trim() === '') return;
@@ -58,19 +99,45 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
                     className="d-flex flex-column gap-3 flex-grow-1 overflow-y-scroll pb-3"
                     style={{ height: '12vh' }}
                 >
-                    {qnaList.map((qa) => {
+                    {messageList.map((message: messageItem) => {
                         return (
-                            <div key={qa.id}>
-                                <div className="d-flex mb-1">
-                                    <div className="position-relative bg-light rounded p-3 text-dark ms-3"
-                                         style={{ maxWidth: '75%', minWidth: '40%' }}
-                                    >
-                                        <strong>{qa.questioner}</strong>
-                                        <div>{qa.question}</div>
+                            <div key={message.messageId}>
+                                { /* 답변자 */}
+                                { loginUserId == message.userId &&
+                                    <>
+                                        <div className="d-flex justify-content-end">
+                                            <div
+                                                className="position-relative bg-primary text-white rounded p-3 me-3"
+                                                style={{ maxWidth: '75%', minWidth: '40%' }}
+                                            >
+                                                <div>{message.content}</div>
+                                                <div className="position-absolute speech-bubble-right"></div>
+                                            </div>
+                                        </div>
+                                        <div className="text-end">
+                                            <small className="text-white me-2">{message.createdAt}</small>
+                                        </div>
+                                    </>
+                                }
 
-                                        <div className={`position-absolute ${loginUserId !== null ? 'speech-bubble-left' : 'speech-bubble-right'}`}></div>
-                                    </div>
-                                </div>
+                                { /* 질문자 */}
+                                { loginUserId != message.userId &&
+                                    <>
+                                        <div className="d-flex mb-1">
+                                            <div className="position-relative bg-light rounded p-3 text-dark ms-3"
+                                                 style={{ maxWidth: '75%', minWidth: '40%' }}
+                                            >
+                                                <div className="d-flex justify-content-between">
+                                                    <strong>{message.accountId}</strong>
+                                                    <small className="text-white-50 ms-3">{message.createdAt}</small>
+                                                </div>
+                                                <div>{message.content}</div>
+                                                <div className="position-absolute speech-bubble-left"></div>
+                                            </div>
+                                        </div>
+                                        <small className="text-white ms-2">{message.createdAt}</small>
+                                    </>
+                                }
                             </div>
                         );
                     })}
@@ -82,6 +149,7 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
                         placeholder="내용을 입력하세요."
                         value={input}
                         rows={3}
+                        style={{resize: 'none'}}
                         onChange={(e) => setInput(e.target.value)}
                     />
                     <button className="btn btn-primary" onClick={handleSubmit}>

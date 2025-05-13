@@ -47,11 +47,16 @@ export default function ChatRoomListPage({ userId }: ChatRoomListPageProps) {
         >
             <div className="list-group">
                 {roomList.map((room: roomItem) => (
-                    <div className="list-group-item list-group-item-action d-flex align-items-center gap-3"
+                    <div className="list-group-item list-group-item-action d-flex align-items-center gap-3 m-1"
                          key={room.roomId}
                          style={{ cursor: 'pointer' }}
                          onClick={() => handleRoomClick(room.roomId)}>
-                        <img src="/images/user1.jpg" alt="Profile" className="rounded-circle" width="48" height="48"/>
+                        <img
+                            src="/images/profile.png"
+                            alt="프로필 사진"
+                            className="rounded-circle"
+                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                        />
                         <div className="flex-grow-1">
                             <div className="d-flex justify-content-between">
                                 <strong>{ room.accountId }</strong>
