@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import useAuth from "@/hooks/useAuth";
 import customFetch from "@/api/customFetch";
 import {useStomp} from "@/hooks/useStomp";
@@ -16,6 +16,7 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
     const [input, setInput] = useState('');
     const [messageList, setMessageList] = useState<messageItem[]>([]);
     const [roomIdState, setRoomIdState] = useState();
+    const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
     type messageItem = {
         roomId: number;
@@ -32,6 +33,7 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
             const id = roomId ? roomId : await loadRoomId();
             setRoomIdState(id);
         };
+
         loadData();
     }, [roomId]);
 
@@ -40,7 +42,13 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
         if (roomIdState) {
             loadChatMessageList();
         }
+
+        scrollToBottom();
     }, [roomIdState]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messageList]);
 
     // 3. 소켓 연결 후 메시지 받기 (roomIdState가 설정된 후에 연결)
     const stomp = useStomp(roomIdState ?? 0, (msg: messageItem) => {
@@ -94,6 +102,13 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
         setInput('');
     };
 
+    const scrollToBottom = () => {
+        const container = messageContainerRef.current;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+    };
+
     return (
         <div
             className="tab-pane fade show active flex-grow-1 d-flex flex-column"
@@ -113,6 +128,7 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
                 <div
                     className="d-flex flex-column gap-3 flex-grow-1 overflow-y-scroll pb-3"
                     style={{ height: '12vh' }}
+                    ref={messageContainerRef}
                 >
                     {messageList.map((message: messageItem) => {
                         return (
@@ -166,6 +182,12 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
                         rows={3}
                         style={{resize: 'none'}}
                         onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault(); // 줄바꿈 방지
+                                handleSubmit();     // 전송
+                            }
+                        }}
                     />
                     <button className="btn btn-primary" onClick={handleSubmit}>
                         전송

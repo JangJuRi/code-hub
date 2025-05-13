@@ -44,7 +44,6 @@ export function useStomp(roomId: number, onMessageReceived: (msg: ChatMessage) =
 
 
     const sendMessage = (msg: ChatMessage) => {
-        console.log(clientRef.current)
         clientRef.current?.publish({
             destination: `/app/chat.send.${roomId}`, // 서버에서 MessageMapping에 대응
             body: JSON.stringify(msg),
