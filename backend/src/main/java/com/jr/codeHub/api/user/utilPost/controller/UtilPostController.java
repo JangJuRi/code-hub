@@ -69,4 +69,10 @@ public class UtilPostController {
     public ResponseEntity<?> mergeUtilPostRecommend(@RequestBody Long utilPostId) {
         return ResponseEntity.ok(utilPostService.mergeUtilPostRecommend(utilPostId));
     }
+
+    @GetMapping("/user/{userId}/util-post/{utilPostMasterId}/list/load")
+    public ResponseEntity<?> loadUtilPostListByUserId(@PathVariable("userId") Long userId,
+                                                @PathVariable("utilPostMasterId") Long utilPostMasterId) {
+        return ResponseEntity.ok(utilPostService.loadUtilPostListByUserId(userId, utilPostMasterId));
+    }
 }

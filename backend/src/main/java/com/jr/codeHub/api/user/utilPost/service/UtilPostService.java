@@ -149,4 +149,10 @@ public class UtilPostService {
             }
         }
     }
+
+    public ApiResponse loadUtilPostListByUserId(Long userId, Long utilPostMasterId) {
+        List<UtilPostListDto> postList = utilPostRepository.findUtilPostListByUserId(userId, utilPostMasterId);
+
+        return ApiResponse.ok(postList);
+    }
 }

@@ -119,7 +119,7 @@ export default function ChatPage({ roomId, userId, onBack }: ChatPageProps) {
                 { loginUserId === userId &&
                     <div className="mb-3">
                         <button className="btn btn-light rounded-pill px-3 d-inline-flex align-items-center shadow-sm" onClick={onBack}>
-                            <i className="bi bi-arrow-left me-2"></i> {/* Bootstrap Icons 사용 시 */}
+                            <i className="bi bi-arrow-left me-2"></i>
                             목록으로
                         </button>
                     </div>

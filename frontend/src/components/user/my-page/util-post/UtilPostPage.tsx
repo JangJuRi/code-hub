@@ -1,17 +1,18 @@
 import Pagination from "@/components/common/Pagination";
 import React, {useEffect, useState} from "react";
 import customFetch from "@/api/customFetch";
-import Link from "next/link";
 import {useDebounce} from "use-debounce";
+import UtilPostListPage from "@/components/user/my-page/util-post/UtilPostListPage";
 
 interface UtilPageProps {
-    userId?: number | null;
+    userId: number;
 }
 
 export default function UtilPostPage({ userId } : UtilPageProps) {
     const [searchText, setSearchText] = useState("");
     const [debouncedSearchText] = useDebounce(searchText, 500);
     const [postList, setPostList] = useState([]);
+    const [selectedUtilPostMasterId, setSelectedUtilPostMasterId] = useState<number | null>(null);
     const [paging, setPaging] = useState({
         number: 0,
         totalPages: 0,
@@ -51,6 +52,14 @@ export default function UtilPostPage({ userId } : UtilPageProps) {
         }
     }
 
+    const handleUtilPostMasterClick = (utilPostMasterId: number) => {
+        setSelectedUtilPostMasterId(utilPostMasterId);
+    };
+
+    if (selectedUtilPostMasterId !== null) {
+        return <UtilPostListPage utilPostMasterId={selectedUtilPostMasterId} userId={userId} onBack={() => setSelectedUtilPostMasterId(null)} />;
+    }
+
     return (
         <>
             <div className="tab-pane fade show active flex-grow-1 d-flex flex-column" id="util" aria-labelledby="util-tab">
@@ -68,24 +77,25 @@ export default function UtilPostPage({ userId } : UtilPageProps) {
 
                 <div className="list-group flex-grow-1">
                     {postList.map((post: postItem) => (
-                        <Link href={`/user/util-post/detail/${post.utilPostMasterId}`} key={post.utilPostMasterId}>
-                            <div className="list-group-item bg-secondary text-white d-flex justify-content-between">
-                                <strong>{post.title}</strong>
-                                <div className="language-container">
-                                    {post.languages?.map((language, index) => (
-                                        <span
-                                            key={index}
-                                            className="language-circle"
-                                            style={{ backgroundColor: language.color }}
-                                        ></span>
-                                    ))}
-                                    <small className="ms-3">
-                                        <i className="bi bi-pen me-1"></i>
-                                        {post.postCount}
-                                    </small>
-                                </div>
+                        <div className="list-group-item bg-secondary text-white d-flex justify-content-between"
+                             key={post.utilPostMasterId}
+                             style={{ cursor: 'pointer' }}
+                             onClick={() => handleUtilPostMasterClick(post.utilPostMasterId)}>
+                            <strong>{post.title}</strong>
+                            <div className="language-container">
+                                {post.languages?.map((language, index) => (
+                                    <span
+                                        key={index}
+                                        className="language-circle"
+                                        style={{ backgroundColor: language.color }}
+                                    ></span>
+                                ))}
+                                <small className="ms-3">
+                                    <i className="bi bi-pen me-1"></i>
+                                    {post.postCount}
+                                </small>
                             </div>
-                        </Link>
+                        </div>
                     ))}
                 </div>
             </div>

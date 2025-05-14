@@ -69,4 +69,18 @@ public interface UtilPostRepository extends JpaRepository<UtilPost, Long> {
     Long sumRecommendCountByUserId(Long userId);
 
     Long countByUserIdAndTopYn(Long userId, Character topYn);
+
+    @Query(value = "select new com.jr.codeHub.api.user.utilPost.dto.UtilPostListDto(" +
+            "       upd.id" +
+            "     , upd.content" +
+            "     , upd.utilPostLanguageType.languageType" +
+            "     , upd.utilPostLanguageType.color" +
+            "     , upd.topYn" +
+            ") " +
+            "  from UtilPost upd" +
+            " where upd.utilPostMaster.id = :utilPostMasterId" +
+            "   and upd.user.id = :userId" +
+            " order by upd.createdAt asc"
+    )
+    List<UtilPostListDto> findUtilPostListByUserId(Long userId, Long utilPostMasterId);
 }
