@@ -70,15 +70,28 @@ public class JwtUtil {
                     .getPayload();
         } catch (ExpiredJwtException e) {
             System.out.println("JWT 만료됨: " + e.getMessage());
-            return null;
+            return e.getClaims();
         } catch (Exception e) {
             System.out.println("JWT 파싱 실패: " + e.getMessage());
             return null;
         }
     }
 
-    public boolean isInvalidToken(String token) {
-        return getClaims(token) == null;
+    public boolean isExpiredToken(String token) {
+        try {
+            Date expiration = Jwts.parser()
+                    .verifyWith(getSecretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration();
+
+            return expiration.before(new Date()); // 지금보다 만료일이 이전이면 true
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            return true; // 오류 발생 시도 만료된 것으로 간주
+        }
     }
 
     public String resolveToken(HttpServletRequest request) {

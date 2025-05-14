@@ -99,12 +99,13 @@ public class AuthService {
         String accessToken = jwtUtil.resolveToken(request);
         Claims claims = jwtUtil.getClaims(accessToken);
 
-        if (refreshToken == null) {
-            return ApiResponse.fail("Refresh Token이 없습니다.", null);
+        // accessToken이 유효하다면 로직 패스
+        if (!jwtUtil.isExpiredToken(accessToken)) {
+            return ApiResponse.ok(accessToken);
         }
 
-        if (claims == null) {
-            return ApiResponse.fail("Access Token이 유효하지 않습니다.", null);
+        if (refreshToken == null) {
+            return ApiResponse.fail("Refresh Token이 없습니다.", null);
         }
 
         String userId = claims.getSubject();
@@ -115,16 +116,15 @@ public class AuthService {
             return ApiResponse.fail("Refresh Token이 유효하지 않습니다.", null);
         }
 
-        if (jwtUtil.isInvalidToken(refreshToken)) {
+        if (jwtUtil.isExpiredToken(refreshToken)) {
             return ApiResponse.fail("Refresh Token이 만료되었습니다.", null);
         }
 
         User loginUser = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
+        accessToken = jwtUtil.generateAccessToken(String.valueOf(loginUser.getId()), loginUser.getAccountId());
 
-        String newAccessToken = jwtUtil.generateAccessToken(String.valueOf(loginUser.getId()), loginUser.getAccountId());
-
-        return ApiResponse.ok(newAccessToken);
+        return ApiResponse.ok(accessToken);
     }
 }

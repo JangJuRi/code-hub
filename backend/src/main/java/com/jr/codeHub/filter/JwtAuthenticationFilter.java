@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String token = jwtUtil.resolveToken(request);
 
-        if (!isWhiteListed(path) && token != null && !jwtUtil.isInvalidToken(token)) {
+        if (!isWhiteListed(path) && token != null && !jwtUtil.isExpiredToken(token)) {
             String userId = jwtUtil.getUserIdFromToken(token);
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId);
 
