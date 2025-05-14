@@ -48,7 +48,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
         if (result.success) {
             alert("저장되었습니다.");
 
-            router.push(`/user/util-post/${result.data}/detail`);
+            router.push(`/user/util-post/detail/${result.data}`);
         }
     };
 

@@ -68,7 +68,7 @@ export default function UtilPostPage({ userId } : UtilPageProps) {
 
                 <div className="list-group flex-grow-1">
                     {postList.map((post: postItem) => (
-                        <Link href={`/user/util-post/${post.utilPostMasterId}/detail`} key={post.utilPostMasterId}>
+                        <Link href={`/user/util-post/detail/${post.utilPostMasterId}`} key={post.utilPostMasterId}>
                             <div className="list-group-item bg-secondary text-white d-flex justify-content-between">
                                 <strong>{post.title}</strong>
                                 <div className="language-container">
