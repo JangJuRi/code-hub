@@ -1,11 +1,11 @@
 "use client";
 
-import UtilPage from "@/components/user/my-page/UtilPage";
+import UtilPostPage from "@/components/user/my-page/util-post/UtilPostPage";
 import customFetch from "@/api/customFetch";
 import {use, useEffect, useState} from "react";
-import ChatPage from "@/components/user/my-page/ChatPage";
+import ChatPage from "@/components/user/my-page/chat/ChatPage";
 import useAuth from "@/hooks/useAuth";
-import ChatRoomListPage from "@/components/user/my-page/ChatRoomListPage";
+import ChatRoomListPage from "@/components/user/my-page/chat/ChatRoomListPage";
 
 export default function MyPage({ params }: { params: Promise<{ id: number }> }) {
     const { id } = use(params);
@@ -116,7 +116,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                             </ul>
 
                             <div className="tab-content flex-grow-1 d-flex flex-column" style={{ height: '95%' }} id="mypageTabContent">
-                                { currentTab === 0 && <UtilPage userId={id}/>}
+                                { currentTab === 0 && <UtilPostPage userId={id}/>}
                                 { currentTab === 1 && loginUserId === id && <ChatRoomListPage userId={id}/>} {/* 채팅방 리스트 페이지 */}
                                 { currentTab === 1 && loginUserId !== id && <ChatPage userId={id}/>} {/* 채팅 페이지 */}
                             </div>

@@ -1,6 +1,6 @@
 import customFetch from "@/api/customFetch";
 import {useEffect, useState} from "react";
-import ChatPage from "@/components/user/my-page/ChatPage";
+import ChatPage from "@/components/user/my-page/chat/ChatPage";
 
 interface ChatRoomListPageProps {
     userId?: number | null;

@@ -45,7 +45,7 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
     }, [language]);
 
     const loadMasterDetail = async () => {
-        const result= await customFetch(`/user/util-post/master/detail/${id}/load`, {
+        const result= await customFetch(`/user/util-post/master/${id}/detail/load`, {
             method: 'GET'
         })
 
@@ -58,7 +58,7 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
     }
 
     const loadPostList = async () => {
-        const result= await customFetch(`/user/util-post/list/${id}/${language}/load`, {
+        const result= await customFetch(`/user/util-post/${id}/list/${language}/load`, {
             method: 'GET'
         })
 

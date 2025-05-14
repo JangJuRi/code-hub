@@ -39,12 +39,12 @@ public class UtilPostController {
         return ResponseEntity.ok(utilPostService.loadUtilPostMasterList(searchFilter));
     }
 
-    @GetMapping("/user/util-post/master/detail/{utilPostMasterId}/load")
+    @GetMapping("/user/util-post/master/{utilPostMasterId}/detail/load")
     public ResponseEntity<?> loadUtilPostMasterDetail(@PathVariable("utilPostMasterId") Long utilPostMasterId) {
         return ResponseEntity.ok(utilPostService.loadUtilPostMasterDetail(utilPostMasterId));
     }
 
-    @GetMapping("/user/util-post/list/{utilPostMasterId}/{language}/load")
+    @GetMapping("/user/util-post/{utilPostMasterId}/list/{language}/load")
     public ResponseEntity<?> loadUtilPostList(@PathVariable("utilPostMasterId") Long utilPostMasterId,
                                               @PathVariable("language") String languageType) {
         return ResponseEntity.ok(utilPostService.loadUtilPostList(utilPostMasterId, languageType));
@@ -60,7 +60,7 @@ public class UtilPostController {
         return ResponseEntity.ok(utilPostService.loadUtilPostLanguageListByPostMasterId(utilPostMasterId));
     }
 
-    @GetMapping("/user/util-post/detail/{utilPostId}/load")
+    @GetMapping("/user/util-post/{utilPostId}/detail/load")
     public ResponseEntity<?> loadUtilPostDetail(@PathVariable("utilPostId") Long utilPostId) {
         return ResponseEntity.ok(utilPostService.loadUtilPostDetail(utilPostId));
     }

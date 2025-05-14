@@ -8,7 +8,7 @@ interface UtilPageProps {
     userId?: number | null;
 }
 
-export default function UtilPage({ userId } : UtilPageProps) {
+export default function UtilPostPage({ userId } : UtilPageProps) {
     const [searchText, setSearchText] = useState("");
     const [debouncedSearchText] = useDebounce(searchText, 500);
     const [postList, setPostList] = useState([]);
@@ -68,7 +68,7 @@ export default function UtilPage({ userId } : UtilPageProps) {
 
                 <div className="list-group flex-grow-1">
                     {postList.map((post: postItem) => (
-                        <Link href={`/user/util-post/detail/${post.utilPostMasterId}`} key={post.utilPostMasterId}>
+                        <Link href={`/user/util-post/${post.utilPostMasterId}/detail`} key={post.utilPostMasterId}>
                             <div className="list-group-item bg-secondary text-white d-flex justify-content-between">
                                 <strong>{post.title}</strong>
                                 <div className="language-container">

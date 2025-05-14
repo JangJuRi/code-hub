@@ -20,7 +20,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     }, []);
 
     const loadMasterDetail = async () => {
-        const result= await customFetch(`/user/util-post/master/detail/${id}/load`, {
+        const result= await customFetch(`/user/util-post/master/${id}/detail/load`, {
             method: 'GET'
         })
 
@@ -48,7 +48,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
         if (result.success) {
             alert("저장되었습니다.");
 
-            router.push(`/user/util-post/detail/${result.data}`);
+            router.push(`/user/util-post/${result.data}/detail`);
         }
     };
 

@@ -30,7 +30,7 @@ export default function PostModal({reloadList, detailId, masterId, settingLangua
     }, []);
 
     const loadPostDetail = async () => {
-        const result = await customFetch(`/user/util-post/detail/${detailId}/load`, {
+        const result = await customFetch(`/user/util-post/${detailId}/detail/load`, {
             method: 'GET'
         })
 

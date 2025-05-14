@@ -4,7 +4,7 @@ const UtilPostCard = ({ data }: { data:{
     id:number, title:string, description: string, languageType:string, color:string
 } }) => {
     return (
-        <Link href={`/user/util-post/detail/${data.id}`}>
+        <Link href={`/user/util-post/${data.id}/detail`}>
             <div className="col">
                 <div className="card">
                     <div className="card-img-top rounded-top d-flex justify-content-center align-items-center"
