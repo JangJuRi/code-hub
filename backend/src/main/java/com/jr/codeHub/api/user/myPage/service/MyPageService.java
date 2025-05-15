@@ -48,6 +48,7 @@ public class MyPageService {
         MyPageInfoDto myPageInfoDto = new MyPageInfoDto(
                 user.getUserName(),
                 user.getCreatedAt(),
+                user.getGithubName(),
                 postCount,
                 recommendCount,
                 mainUtilCount,
@@ -122,5 +123,21 @@ public class MyPageService {
                 message.getContent(),
                 message.getCreatedAt()
         );
+    }
+
+    public ApiResponse modifyUserName(String userName) {
+        User loginUser = userService.getLoginUser();
+        loginUser.setUserName(userName);
+        userRepository.save(loginUser);
+
+        return ApiResponse.ok(null);
+    }
+
+    public ApiResponse modifyGithubName(String githubName) {
+        User loginUser = userService.getLoginUser();
+        loginUser.setGithubName(githubName);
+        userRepository.save(loginUser);
+
+        return ApiResponse.ok(null);
     }
 }

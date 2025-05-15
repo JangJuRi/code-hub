@@ -1,6 +1,7 @@
 package com.jr.codeHub.api.user.myPage.controller;
 
 import com.jr.codeHub.api.user.myPage.dto.ChatMessageListResponseDto;
+import com.jr.codeHub.api.user.myPage.dto.ModalInputDto;
 import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
 import com.jr.codeHub.api.user.myPage.service.MyPageService;
 import com.jr.codeHub.entity.ChatMessage;
@@ -50,5 +51,15 @@ public class MyPageController {
     public ChatMessageListResponseDto sendMessage(@DestinationVariable String roomId, @Payload ChatMessage message, Principal principal) {
         ChatMessageListResponseDto savedMessage = myPageService.addMessage(roomId, message, principal);
         return savedMessage;
+    }
+
+    @PostMapping("/user/my-page/user-name/modify")
+    public ResponseEntity<?> modifyUserName(@RequestBody ModalInputDto modalInputDto) {
+        return ResponseEntity.ok(myPageService.modifyUserName(modalInputDto.getText()));
+    }
+
+    @PostMapping("/user/my-page/github-name/modify")
+    public ResponseEntity<?> modifyGithubName(@RequestBody ModalInputDto modalInputDto) {
+        return ResponseEntity.ok(myPageService.modifyGithubName(modalInputDto.getText()));
     }
 }
