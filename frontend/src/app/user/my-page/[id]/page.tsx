@@ -6,6 +6,7 @@ import {use, useEffect, useState} from "react";
 import ChatPage from "@/components/user/my-page/chat/ChatPage";
 import useAuth from "@/hooks/useAuth";
 import ChatRoomListPage from "@/components/user/my-page/chat/ChatRoomListPage";
+import InfoPage from "@/components/user/my-page/info/InfoPage";
 
 export default function MyPage({ params }: { params: Promise<{ id: number }> }) {
     const { id } = use(params);
@@ -19,11 +20,11 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
         mainCodingTestCount: 0,
     });
 
-    const [currentTab, setCurrentTab] = useState(0);
-    const tabList = [
-        { code: 'util', name: '유틸' },
-        { code: 'chat', name: '채팅' }
-    ]
+    // mainTab: 0=정보, 1=포스트, 2=채팅
+    const [mainTab, setMainTab] = useState(0);
+    // postSubTab: 0=유틸, 1=코테
+    const [postSubTab, setPostSubTab] = useState(0);
+    const [postDropdownOpen, setPostDropdownOpen] = useState(false);
 
     useEffect(() => {
         loadUserInfo();
@@ -35,8 +36,15 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
         })
 
         if (result.success) {
-           setUserInfo(result.data);
+            setUserInfo(result.data);
         }
+    }
+
+    // 포스트 하위 탭 클릭 시 실행
+    const handlePostSubTabClick = (index: number) => {
+        setMainTab(1);
+        setPostSubTab(index);
+        setPostDropdownOpen(false);
     }
 
     return (
@@ -95,30 +103,74 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                 <div className="col-md-9 h-100">
                     <div className="card bg-dark text-white h-100">
                         <div className="card-body">
-                            <ul className="nav nav-tabs d-flex justify-content-between align-items-center mb-3" id="mypageTab" role="tablist">
-                                <div className="d-flex">
-                                    {tabList.map((tab, index) => (
-                                        <li className="nav-item" role="presentation" key={index}>
-                                            <button className={`nav-link ${index === (currentTab) ? "active" : ""}`}
-                                                    id={`${tab.code}-tab`}
-                                                    type="button"
-                                                    role="tab"
-                                                    data-bs-toggle="tab"
-                                                    data-bs-target={`#${tab.code}`}
-                                                    aria-controls={tab.code}
-                                                    aria-selected={index === currentTab ? 'true' : 'false'}
-                                                    onClick={() => setCurrentTab(index)}>
-                                                {tab.name}
+
+                            {/* 상단 탭 */}
+                            <ul className="nav nav-tabs mb-3" style={{ position: 'relative' }}>
+                                <li className="nav-item">
+                                    <button
+                                        className={`nav-link ${mainTab === 0 ? 'active' : ''}`}
+                                        onClick={() => setMainTab(0)}
+                                        type="button"
+                                    >
+                                        <i className="bi bi-person-circle me-1"></i> 정보
+                                    </button>
+                                </li>
+
+                                {/* 포스트 탭 (hover 드롭다운) */}
+                                <li
+                                    className={`nav-item dropdown`}
+                                    onMouseEnter={() => setPostDropdownOpen(true)}
+                                    onMouseLeave={() => setPostDropdownOpen(false)}
+                                    style={{ position: 'relative' }}
+                                >
+                                    <button
+                                        className={`nav-link dropdown-toggle ${mainTab === 1 ? 'active' : ''}`} // <-- 여기 nav-link 꼭 포함
+                                        type="button"
+                                        aria-expanded={postDropdownOpen}
+                                    >
+                                        <i className="bi bi-code-slash me-1"></i> 코드
+                                    </button>
+
+                                    <ul className={`dropdown-menu border-white bg-dark ${postDropdownOpen ? 'show' : ''}`} style={{ marginTop: 0 }}>
+                                        <li>
+                                            <button
+                                                className={`dropdown-item`}
+                                                onClick={() => handlePostSubTabClick(0)}
+                                            >
+                                                <i className="bi bi-lightning-charge me-1"></i> 유틸
                                             </button>
                                         </li>
-                                    ))}
-                                </div>
+                                        <li>
+                                            <button
+                                                className={`dropdown-item`}
+                                                onClick={() => handlePostSubTabClick(1)}
+                                            >
+                                                <i className="bi bi-terminal me-1"></i> 코테
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li className="nav-item">
+                                    <button
+                                        className={`nav-link ${mainTab === 2 ? 'active' : ''}`}
+                                        onClick={() => setMainTab(2)}
+                                        type="button"
+                                    >
+                                        <i className="bi bi-chat-dots me-1"></i> 채팅
+                                    </button>
+                                </li>
                             </ul>
 
-                            <div className="tab-content flex-grow-1 d-flex flex-column" style={{ height: '95%' }} id="mypageTabContent">
-                                { currentTab === 0 && <UtilPostPage userId={id}/>}
-                                { currentTab === 1 && loginUserId === id && <ChatRoomListPage userId={id}/>} {/* 채팅방 리스트 페이지 */}
-                                { currentTab === 1 && loginUserId !== id && <ChatPage userId={id}/>} {/* 채팅 페이지 */}
+                            {/* 콘텐츠 영역 */}
+                            <div className="tab-content flex-grow-1 d-flex flex-column" style={{ height: '95%' }}>
+                                {mainTab === 0 && <InfoPage userId={id} />}
+
+                                {mainTab === 1 && postSubTab === 0 && <UtilPostPage userId={id} />}
+                                {mainTab === 1 && postSubTab === 1 && <UtilPostPage userId={id} />}
+
+                                {mainTab === 2 && loginUserId === id && <ChatRoomListPage userId={id} />}
+                                {mainTab === 2 && loginUserId !== id && <ChatPage userId={id} />}
                             </div>
                         </div>
                     </div>

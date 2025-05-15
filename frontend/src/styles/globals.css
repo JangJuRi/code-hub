@@ -246,3 +246,13 @@ a {
     border-bottom: 10px solid transparent;
     border-left: 10px solid #0d6efd;
 }
+
+.dropdown-menu.bg-dark .dropdown-item {
+    color: #f8f9fa; /* 밝은 글자색 */
+}
+
+.dropdown-menu.bg-dark .dropdown-item:hover,
+.dropdown-menu.bg-dark .dropdown-item:focus {
+    background-color: white;
+    color: black;
+}
