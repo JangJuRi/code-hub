@@ -106,9 +106,11 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                                 />
                                 <h5 className="card-title text-center">
                                     {userInfo.userName}
-                                    <i className="bi bi-pencil ms-2"
-                                       onClick={() => modalOpen('name')}
-                                       style={{ cursor: 'pointer' }}></i>
+                                    { loginUserId === id &&
+                                        <i className="bi bi-pencil ms-2"
+                                           onClick={() => modalOpen('name')}
+                                           style={{ cursor: 'pointer' }}></i>
+                                    }
                                 </h5>
 
                                 <div className="w-100 p-3">
@@ -129,9 +131,11 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                                         <a href={`https://github.com/${userInfo.githubName}`} target="_blank" rel="noopener noreferrer" className="text-white text-decoration-none">
                                             {userInfo.githubName}
                                         </a>
-                                        <i className="bi bi-pencil ms-2"
-                                           onClick={() => modalOpen('github')}
-                                           style={{ cursor: 'pointer' }}></i>
+                                        { loginUserId === id &&
+                                            <i className="bi bi-pencil ms-2"
+                                               onClick={() => modalOpen('github')}
+                                               style={{ cursor: 'pointer' }}></i>
+                                        }
                                     </div>
                                 </div>
 
