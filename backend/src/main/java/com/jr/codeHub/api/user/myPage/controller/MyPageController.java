@@ -59,7 +59,7 @@ public class MyPageController {
     }
 
     @PostMapping("/user/my-page/github-name/modify")
-    public ResponseEntity<?> modifyGithubName(@RequestBody ModalInputDto modalInputDto) {
+    public ResponseEntity<?> modifyGithubName(@RequestBody ModalInputDto modalInputDto) throws Exception {
         return ResponseEntity.ok(myPageService.modifyGithubName(modalInputDto.getText()));
     }
 }

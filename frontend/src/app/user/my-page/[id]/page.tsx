@@ -75,6 +75,9 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
         if (result.success) {
             setShowModal(false);
             await loadUserInfo();
+
+        } else {
+            alert(result.message);
         }
     }
 

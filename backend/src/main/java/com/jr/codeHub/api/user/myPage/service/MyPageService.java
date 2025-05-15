@@ -2,6 +2,7 @@ package com.jr.codeHub.api.user.myPage.service;
 
 import com.jr.codeHub.api.user.chat.repository.ChatMessageRepository;
 import com.jr.codeHub.api.user.chat.repository.ChatRoomRepository;
+import com.jr.codeHub.api.user.github.GithubService;
 import com.jr.codeHub.api.user.myPage.dto.*;
 import com.jr.codeHub.api.user.user.repository.UserRepository;
 import com.jr.codeHub.api.user.user.service.UserService;
@@ -13,12 +14,14 @@ import com.jr.codeHub.entity.ChatRoom;
 import com.jr.codeHub.entity.User;
 import com.jr.codeHub.entity.UtilPostLanguageType;
 import com.jr.codeHub.util.ApiResponse;
+import com.jr.codeHub.util.dto.HttpResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MyPageService {
     private final UserService userService;
+    private final GithubService githubService;
     private final UserRepository userRepository;
     private final UtilPostRepository utilPostRepository;
     private final UtilPostMasterRepository utilPostMasterRepository;
@@ -133,7 +137,14 @@ public class MyPageService {
         return ApiResponse.ok(null);
     }
 
-    public ApiResponse modifyGithubName(String githubName) {
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponse modifyGithubName(String githubName) throws Exception {
+        HttpResponseDto result = githubService.CheckValidGithubUser(githubName);
+
+        if (result.getCode() == 404) {
+            return ApiResponse.fail("존재하지 않는 사용자입니다.", null);
+        }
+
         User loginUser = userService.getLoginUser();
         loginUser.setGithubName(githubName);
         userRepository.save(loginUser);
