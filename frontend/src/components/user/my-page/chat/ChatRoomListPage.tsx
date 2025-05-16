@@ -53,7 +53,7 @@ export default function ChatRoomListPage({ userId }: ChatRoomListPageProps) {
             ) : (
                 <div className="list-group">
                     {roomList.map((room: roomItem) => (
-                        <div className="list-group-item list-group-item-action d-flex align-items-center gap-3 m-1"
+                        <div className="list-group-item list-group-item-action d-flex align-items-center gap-3 mb-1"
                              key={room.roomId}
                              style={{ cursor: 'pointer' }}
                              onClick={() => handleRoomClick(room.roomId)}>

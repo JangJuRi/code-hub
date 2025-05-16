@@ -232,7 +232,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                                 </ul>
 
                                 {/* 콘텐츠 영역 */}
-                                <div className="tab-content flex-grow-1 d-flex flex-column" style={{ height: '95%' }}>
+                                <div className="tab-content flex-grow-1 d-flex flex-column overflow-y-scroll" style={{ height: '70vh' }}>
                                     {mainTab === 0 && <InfoPage userId={id} />}
 
                                     {mainTab === 1 && postSubTab === 0 && <UtilPostPage userId={id} />}

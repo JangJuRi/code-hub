@@ -256,3 +256,7 @@ a {
     background-color: white;
     color: black;
 }
+
+.card {
+    min-height: 130px;
+}

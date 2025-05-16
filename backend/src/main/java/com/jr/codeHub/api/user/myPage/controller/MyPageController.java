@@ -62,4 +62,9 @@ public class MyPageController {
     public ResponseEntity<?> modifyGithubName(@RequestBody ModalInputDto modalInputDto) throws Exception {
         return ResponseEntity.ok(myPageService.modifyGithubName(modalInputDto.getText()));
     }
+
+    @GetMapping("/user/my-page/{userId}/info/github-pinned-repository/load")
+    public ResponseEntity<?> loadGithubPinnedRepository(@PathVariable("userId") Long userId) throws Exception {
+        return ResponseEntity.ok(myPageService.loadGithubPinnedRepository(userId));
+    }
 }
