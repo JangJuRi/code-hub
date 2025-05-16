@@ -164,4 +164,17 @@ public class MyPageService {
             return ApiResponse.fail("api 응답 실패", null);
         }
     }
+
+    public ApiResponse loadGithubContributions(Long userId) throws Exception {
+        User user = userRepository.findById(userId).get();
+
+        HttpResponseDto result = githubService.getContributions(user.getGithubName());
+
+        if (result.getCode() == 200) {
+            return ApiResponse.ok(result.getData());
+
+        } else {
+            return ApiResponse.fail("api 응답 실패", null);
+        }
+    }
 }

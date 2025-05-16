@@ -67,4 +67,9 @@ public class MyPageController {
     public ResponseEntity<?> loadGithubPinnedRepository(@PathVariable("userId") Long userId) throws Exception {
         return ResponseEntity.ok(myPageService.loadGithubPinnedRepository(userId));
     }
+
+    @GetMapping("/user/my-page/{userId}/info/github-contributions/load")
+    public ResponseEntity<?> loadGithubContributions(@PathVariable("userId") Long userId) throws Exception {
+        return ResponseEntity.ok(myPageService.loadGithubContributions(userId));
+    }
 }

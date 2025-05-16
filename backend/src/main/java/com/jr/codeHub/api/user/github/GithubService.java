@@ -10,6 +10,9 @@ import okhttp3.RequestBody;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 @Service
@@ -33,11 +36,6 @@ public class GithubService {
     }
 
     public HttpResponseDto getPinnedRepos(String githubName) throws Exception {
-        Headers headers = new Headers.Builder()
-                .add("Accept", "application/vnd.github+json")
-                .add("Authorization", "bearer " + githubToken)
-                .build();
-
         String graphqlQuery = """
         {
           user(login: "%s") {
@@ -61,6 +59,41 @@ public class GithubService {
           }
         }
         """.formatted(githubName);
+
+        return executeGraphql(graphqlQuery);
+    }
+
+    public HttpResponseDto getContributions(String githubName) throws Exception {
+        // 최근 30일 기간 계산 (ISO 8601)
+        Instant now = Instant.now();
+        String to = DateTimeFormatter.ISO_INSTANT.format(now);
+        String from = DateTimeFormatter.ISO_INSTANT.format(now.minus(30, ChronoUnit.DAYS));
+
+        String graphqlQuery = """
+        {
+          user(login: "%s") {
+            contributionsCollection(from: "%s", to: "%s") {
+              contributionCalendar {
+                weeks {
+                  contributionDays {
+                    date
+                    contributionCount
+                  }
+                }
+              }
+            }
+          }
+        }
+        """.formatted(githubName, from, to);
+
+        return executeGraphql(graphqlQuery);
+    }
+
+    private HttpResponseDto executeGraphql(String graphqlQuery) throws Exception {
+        Headers headers = new Headers.Builder()
+                .add("Accept", "application/vnd.github+json")
+                .add("Authorization", "bearer " + githubToken)
+                .build();
 
         Map<String, String> body = Map.of("query", graphqlQuery);
 
