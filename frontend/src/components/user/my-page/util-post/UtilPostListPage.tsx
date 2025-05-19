@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from "react";
 import customFetch from "@/api/customFetch";
 import Editor from "@monaco-editor/react";
+import Link from "next/link";
 
 interface UtilPostListPageProps {
     utilPostMasterId: number;
+    title: string;
     userId: number;
     onBack?: () => void;
 }
 
-export default function UtilPostListPage({ utilPostMasterId, userId, onBack } : UtilPostListPageProps) {
+export default function UtilPostListPage({ utilPostMasterId, title, userId, onBack } : UtilPostListPageProps) {
     const [postList, setPostList] = useState([]);
 
     useEffect(() => {
@@ -35,15 +37,12 @@ export default function UtilPostListPage({ utilPostMasterId, userId, onBack } : 
 
     return (
         <>
-            <div className="mb-3">
-                <button className="btn btn-light rounded-pill px-3 d-inline-flex align-items-center shadow-sm" onClick={onBack}>
-                    <i className="bi bi-arrow-left me-2"></i>
-                    목록으로
-                </button>
-            </div>
+            <Link href={`/user/util-post/detail/${utilPostMasterId}`}>
+                <h4 className="ms-4">{title}</h4>
+            </Link>
 
             <div className="overflow-y-scroll"
-                 style={{ height: '55vh' }}>
+                 style={{ height: '60vh' }}>
                 {postList.map((post: postItem) => (
                     <div className="m-4"
                          key={post.id}>
@@ -86,6 +85,13 @@ export default function UtilPostListPage({ utilPostMasterId, userId, onBack } : 
                     </div>
                 ))}
             </div>
+
+            <button
+                className="btn btn-light rounded-pill mt-3 d-inline-flex align-items-center justify-content-center text-center shadow-sm"
+                onClick={onBack}
+            >
+                <strong>목록으로</strong>
+            </button>
         </>
     )
 }

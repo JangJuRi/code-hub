@@ -134,7 +134,7 @@ export default function InfoPage({ userId, infoReload } : InfoPageProps) {
                         GitHub Contributions
                     </h4>
 
-                    <div className="w-100" style={{ height: '25vh' }}>
+                    <div className="w-100" style={{ height: '23vh' }}>
                         <Line
                             data={{
                                 labels: contributions.map(c => c.date),

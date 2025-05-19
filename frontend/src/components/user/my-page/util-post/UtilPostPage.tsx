@@ -13,6 +13,7 @@ export default function UtilPostPage({ userId } : UtilPageProps) {
     const [debouncedSearchText] = useDebounce(searchText, 500);
     const [postList, setPostList] = useState([]);
     const [selectedUtilPostMasterId, setSelectedUtilPostMasterId] = useState<number | null>(null);
+    const [selectedUtilPostTitle, setSelectedUtilPostTitle] = useState("");
     const [paging, setPaging] = useState({
         number: 0,
         totalPages: 0,
@@ -52,12 +53,13 @@ export default function UtilPostPage({ userId } : UtilPageProps) {
         }
     }
 
-    const handleUtilPostMasterClick = (utilPostMasterId: number) => {
+    const handleUtilPostMasterClick = (utilPostMasterId: number, title: string) => {
         setSelectedUtilPostMasterId(utilPostMasterId);
+        setSelectedUtilPostTitle(title);
     };
 
     if (selectedUtilPostMasterId !== null) {
-        return <UtilPostListPage utilPostMasterId={selectedUtilPostMasterId} userId={userId} onBack={() => setSelectedUtilPostMasterId(null)} />;
+        return <UtilPostListPage utilPostMasterId={selectedUtilPostMasterId} title={selectedUtilPostTitle} userId={userId} onBack={() => setSelectedUtilPostMasterId(null)} />;
     }
 
     return (
@@ -80,7 +82,7 @@ export default function UtilPostPage({ userId } : UtilPageProps) {
                         <div className="list-group-item bg-secondary text-white d-flex justify-content-between"
                              key={post.utilPostMasterId}
                              style={{ cursor: 'pointer' }}
-                             onClick={() => handleUtilPostMasterClick(post.utilPostMasterId)}>
+                             onClick={() => handleUtilPostMasterClick(post.utilPostMasterId, post.title)}>
                             <strong>{post.title}</strong>
                             <div className="language-container">
                                 {post.languages?.map((language, index) => (
