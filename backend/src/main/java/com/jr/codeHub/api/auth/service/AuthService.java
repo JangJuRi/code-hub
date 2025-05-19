@@ -54,6 +54,8 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(loginUser.getId(), user.getPassword())
         );
 
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         CustomUserDetails authUser = (CustomUserDetails) authentication.getPrincipal();
         String accessToken = jwtUtil.generateAccessToken(authUser.getUsername(), user.getAccountId());
         String refreshToken = jwtUtil.generateRefreshToken(authUser.getUsername(), user.getAccountId());
@@ -102,6 +104,10 @@ public class AuthService {
         // accessToken이 유효하다면 로직 패스
         if (!jwtUtil.isExpiredToken(accessToken)) {
             return ApiResponse.ok(accessToken);
+        }
+
+        if (claims == null) {
+            return ApiResponse.fail("로그인 정보가 없습니다.", null);
         }
 
         if (refreshToken == null) {
