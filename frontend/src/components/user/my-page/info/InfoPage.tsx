@@ -24,9 +24,10 @@ import {Line} from "react-chartjs-2";
 
 interface InfoPageProps {
     userId: number;
+    infoReload: boolean;
 }
 
-export default function InfoPage({ userId } : InfoPageProps) {
+export default function InfoPage({ userId, infoReload } : InfoPageProps) {
     const [repositoryList, setRepositoryList] = useState([{
         name: '',
         description: '',
@@ -45,6 +46,11 @@ export default function InfoPage({ userId } : InfoPageProps) {
         loadGithubRepositoryList();
         loadGithubContributions();
     }, []);
+
+    useEffect(() => {
+        if (infoReload) {
+        }
+    }, [infoReload]);
 
     const loadGithubRepositoryList = async () => {
         const result = await customFetch(`/user/my-page/${userId}/info/github-pinned-repository/load`, {

@@ -137,21 +137,6 @@ public class MyPageService {
         return ApiResponse.ok(null);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public ApiResponse modifyGithubName(String githubName) throws Exception {
-        HttpResponseDto result = githubService.CheckValidGithubUser(githubName);
-
-        if (result.getCode() == 404) {
-            return ApiResponse.fail("존재하지 않는 사용자입니다.", null);
-        }
-
-        User loginUser = userService.getLoginUser();
-        loginUser.setGithubName(githubName);
-        userRepository.save(loginUser);
-
-        return ApiResponse.ok(null);
-    }
-
     public ApiResponse loadGithubPinnedRepository(Long userId) throws Exception {
         User user = userRepository.findById(userId).get();
 

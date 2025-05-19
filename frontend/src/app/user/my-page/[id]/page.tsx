@@ -8,14 +8,16 @@ import useAuth from "@/hooks/useAuth";
 import ChatRoomListPage from "@/components/user/my-page/chat/ChatRoomListPage";
 import InfoPage from "@/components/user/my-page/info/InfoPage";
 import CommonModal from "@/components/common/CommonModal";
+import {useSearchParams} from "next/navigation";
 
 export default function MyPage({ params }: { params: Promise<{ id: number }> }) {
+    const searchParams = useSearchParams();
+
     const { id } = use(params);
     const { loginUserId } = useAuth();
     const [showModal, setShowModal] = useState(false);
-    const [modalTitle, setModalTitle] = useState('');
     const [modalInput, setModalInput] = useState('');
-    const [currentModalType, setCurrentModalType] = useState('');
+    const [infoReload, setInfoReload] = useState(false);
     const [userInfo, setUserInfo] = useState({
         userName: '',
         createdDate: '',
@@ -39,6 +41,15 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
     useEffect(() => {
         setModalInput('');
     }, [showModal]);
+
+    useEffect(() => {
+        const github = searchParams.get('github');
+
+        if (github === 'Y') {
+            loadUserInfo();
+            setInfoReload(true);
+        }
+    }, [searchParams]);
 
     const loadUserInfo = async () => {
         const result = await customFetch(`/user/my-page/${id}/info/load`, {
@@ -88,10 +99,12 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
         setPostDropdownOpen(false);
     }
 
-    const modalOpen = (type: string) => {
-        setModalTitle(type === 'name' ? '사용자명' : '깃허브 링크');
-        setCurrentModalType(type);
-        setShowModal(true);
+    const githubLogin = async () => {
+        const result = await customFetch(`/user/github/oauth/login-url`, {
+            method: 'GET',
+        })
+
+        window.location.href = String(result);
     }
 
     return (
@@ -111,7 +124,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                                     {userInfo.userName}
                                     { loginUserId === id &&
                                         <i className="bi bi-pencil ms-2"
-                                           onClick={() => modalOpen('name')}
+                                           onClick={() => setShowModal(true)}
                                            style={{ cursor: 'pointer' }}></i>
                                     }
                                 </h5>
@@ -136,7 +149,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                                         </a>
                                         { loginUserId === id &&
                                             <i className="bi bi-pencil ms-2"
-                                               onClick={() => modalOpen('github')}
+                                               onClick={() => githubLogin()}
                                                style={{ cursor: 'pointer' }}></i>
                                         }
                                     </div>
@@ -233,7 +246,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
 
                                 {/* 콘텐츠 영역 */}
                                 <div className="tab-content flex-grow-1 d-flex flex-column overflow-y-scroll" style={{ height: '70vh' }}>
-                                    {mainTab === 0 && <InfoPage userId={id} />}
+                                    {mainTab === 0 && <InfoPage userId={id} infoReload={infoReload}/>}
 
                                     {mainTab === 1 && postSubTab === 0 && <UtilPostPage userId={id} />}
                                     {mainTab === 1 && postSubTab === 1 && <UtilPostPage userId={id} />}
@@ -250,7 +263,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
             <CommonModal
                 show={showModal}
                 onClose={() => setShowModal(false)}
-                title={`${modalTitle} 수정`}
+                title={`이름 수정`}
                 footer={
                     <>
                         <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
@@ -258,7 +271,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                         </button>
                         <button className="btn btn-primary"
                                 disabled={modalInput.trim() === ''}
-                                onClick={() => currentModalType === 'name' ? modifyUserName() : modifyGithubName()}>
+                                onClick={() =>  modifyUserName()}>
                             저장
                         </button>
                     </>
