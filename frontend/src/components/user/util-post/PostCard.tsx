@@ -4,6 +4,7 @@ import {useState} from "react";
 import customFetch from "@/api/customFetch";
 import Link from "next/link";
 import Editor from "@monaco-editor/react";
+import useAuth from "@/hooks/useAuth";
 
 interface PostCardProps {
     id: number,
@@ -22,6 +23,7 @@ interface PostCardProps {
 export default function PostCard({id, masterId, userId, accountId, languageType, content, topYn
                                  , recommendCount, recommendId, reloadList, settingLanguageType}: PostCardProps) {
     const [isModalOpen, setModalOpen] = useState(false);
+    const { loginUserId } = useAuth();
 
     const onClose = (isLanguageReload: boolean = false) => {
         reloadList(isLanguageReload);
@@ -78,16 +80,19 @@ export default function PostCard({id, masterId, userId, accountId, languageType,
                         {recommendCount ?? 0}
                     </button>
 
-                    <Dropdown>
-                        <Dropdown.Toggle variant="outline-light" size="sm" id="dropdown-basic" className="border-0">
-                            <i className="bi bi-three-dots-vertical"></i>
-                        </Dropdown.Toggle>
 
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => setModalOpen(true)}>수정</Dropdown.Item>
-                            <Dropdown.Item onClick={() => removeCode()} className="text-danger">삭제</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                    { loginUserId == userId &&
+                        <Dropdown>
+                            <Dropdown.Toggle variant="outline-light" size="sm" id="dropdown-basic" className="border-0">
+                                <i className="bi bi-three-dots-vertical"></i>
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item onClick={() => setModalOpen(true)}>수정</Dropdown.Item>
+                                <Dropdown.Item onClick={() => removeCode()} className="text-danger">삭제</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    }
                 </div>
             </div>
 
