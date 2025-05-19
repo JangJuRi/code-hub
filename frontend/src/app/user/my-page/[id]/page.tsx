@@ -148,7 +148,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
                                             {userInfo.githubName}
                                         </a>
                                         { loginUserId === id &&
-                                            <i className="bi bi-pencil ms-2"
+                                            <i className="bi bi-shield-lock ms-2"
                                                onClick={() => githubLogin()}
                                                style={{ cursor: 'pointer' }}></i>
                                         }
