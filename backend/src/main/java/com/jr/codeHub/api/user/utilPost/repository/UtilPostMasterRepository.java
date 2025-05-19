@@ -30,7 +30,7 @@ public interface UtilPostMasterRepository extends JpaRepository<UtilPostMaster, 
                    "     or SUM(case when uplt.language_type = :#{#searchFilter.languageType} then 1 else 0 end) > 0) "
             , nativeQuery = true
     )
-    List<UtilPostMasterListDto> findUtilPostList(UtilPostSearchFilterDto searchFilter);
+    Page<UtilPostMasterListDto> findUtilPostPagingList(UtilPostSearchFilterDto searchFilter, Pageable pageable);
 
     @Query(value = "select new com.jr.codeHub.api.user.utilPost.dto.UtilPostMasterDetailDto(" +
                    "       upm.id" +

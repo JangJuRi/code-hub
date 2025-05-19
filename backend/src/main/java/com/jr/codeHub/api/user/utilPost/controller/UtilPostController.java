@@ -1,5 +1,6 @@
 package com.jr.codeHub.api.user.utilPost.controller;
 
+import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
 import com.jr.codeHub.api.user.utilPost.dto.UtilPostSaveDto;
 import com.jr.codeHub.api.user.utilPost.dto.UtilPostSearchFilterDto;
 import com.jr.codeHub.api.user.utilPost.service.UtilPostService;
@@ -34,9 +35,9 @@ public class UtilPostController {
         return ResponseEntity.ok(utilPostService.removeUtilPost(utilPost));
     }
 
-    @GetMapping("/user/util-post/master/list/load")
-    public ResponseEntity<?> loadUtilPostMasterList(UtilPostSearchFilterDto searchFilter) {
-        return ResponseEntity.ok(utilPostService.loadUtilPostMasterList(searchFilter));
+    @GetMapping("/user/util-post/master/list/paging/load")
+    public ResponseEntity<?> findUtilPostPagingList(UtilPostSearchFilterDto searchFilter, PagingRequestDto pagingRequestDto) {
+        return ResponseEntity.ok(utilPostService.findUtilPostPagingList(searchFilter, pagingRequestDto));
     }
 
     @GetMapping("/user/util-post/master/{utilPostMasterId}/detail/load")

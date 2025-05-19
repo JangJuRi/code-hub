@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
 
     private static final Set<String> WHITE_LIST = Set.of(
-            "/user/util-post/master/list/load",
+            "/user/util-post/master/list/paging/load",
             "/user/util-post/language-type/list/load",
             "/auth/"
     );

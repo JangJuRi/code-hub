@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import SearchBar from "../components/main/SearchBar";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import customFetch from "@/api/customFetch";
 import UtilPostCard from "@/components/main/UtilPostCard";
+import Pagination from "@/components/common/Pagination";
 
 const Home = () => {
     const [list, setList] = useState([]);
@@ -12,23 +13,30 @@ const Home = () => {
         text: '',
         languageType: ''
     });
+    const [paging, setPaging] = useState({
+        number: 0,
+        totalPages: 0,
+        size: 8
+    });
 
     useEffect(() => {
-        loadList();
+        loadList(0);
     }, [filter]);
 
-    const loadList = async () => {
-        const result= await customFetch('/user/util-post/master/list/load', {
+    const loadList = async (currentPage : number) => {
+        const result= await customFetch('/user/util-post/master/list/paging/load', {
             method: 'GET',
             query: {
+                number: currentPage,
+                size: paging.size,
                 text: filter.text,
                 languageType: filter.languageType
             }
         })
 
         if (result.success) {
-            console.log(result.data)
-            setList(result.data);
+            setPaging(result.data.page);
+            setList(result.data.content);
         }
     }
 
@@ -46,7 +54,7 @@ const Home = () => {
             <SearchBar filter={filter} updateFilter={updateFilter} />
             <div className="d-flex justify-content-end w-100 px-4">
                 <Link href="/user/util-post/write/new">
-                    <button className="btn btn-primary write-btn">글쓰기</button>
+                    <button className="btn btn-primary write-btn mb-3">글쓰기</button>
                 </Link>
             </div>
             {list.length === 0 ? (
@@ -62,6 +70,13 @@ const Home = () => {
                 </div>
             )}
 
+            <div className="mt-auto d-flex justify-content-center py-3">
+                <Pagination
+                    currentPage={paging.number}
+                    totalPages={paging.totalPages}
+                    onPageChange={loadList}
+                />
+            </div>
         </div>
     );
 };

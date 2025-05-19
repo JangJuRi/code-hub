@@ -1,5 +1,7 @@
 package com.jr.codeHub.api.user.utilPost.service;
 
+import com.jr.codeHub.api.user.myPage.dto.PagingRequestDto;
+import com.jr.codeHub.api.user.myPage.dto.PostListResponseDto;
 import com.jr.codeHub.api.user.user.service.UserService;
 import com.jr.codeHub.api.user.utilPost.dto.*;
 import com.jr.codeHub.api.user.utilPost.repository.UtilPostRecommendRepository;
@@ -9,11 +11,17 @@ import com.jr.codeHub.api.user.utilPost.repository.UtilPostMasterRepository;
 import com.jr.codeHub.entity.*;
 import com.jr.codeHub.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,9 +85,19 @@ public class UtilPostService {
         return ApiResponse.ok(null);
     }
 
-    public ApiResponse loadUtilPostMasterList(UtilPostSearchFilterDto searchFilter) {
-        List<UtilPostMasterListDto> utilPostList = utilPostMasterRepository.findUtilPostList(searchFilter);
-        return ApiResponse.ok(utilPostList);
+    public ApiResponse findUtilPostPagingList(UtilPostSearchFilterDto searchFilter, PagingRequestDto pagingRequestDto) {
+        Pageable pageable = PageRequest.of(pagingRequestDto.getNumber(), pagingRequestDto.getSize(), Sort.by(Sort.Direction.DESC, "id"));
+        Page<UtilPostMasterListDto> utilPostList = utilPostMasterRepository.findUtilPostPagingList(searchFilter, pageable);
+
+        Page<UtilPostMasterListDto> sortedColorPage = utilPostList.map(dto -> {
+            String sortedColor = Arrays.stream(dto.getColor().split(","))
+                    .sorted()
+                    .collect(Collectors.joining(","));
+            dto.setColor(sortedColor);
+            return dto;
+        });
+
+        return ApiResponse.ok(sortedColorPage);
     }
 
     public ApiResponse loadUtilPostMasterDetail(long utilPostMasterId) {

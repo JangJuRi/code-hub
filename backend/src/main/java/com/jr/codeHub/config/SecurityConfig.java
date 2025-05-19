@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화 (필요 시 설정)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/auth/**", "/user/util-post/master/list/load", "/user/util-post/language-type/list/load").permitAll() // 공개 경로
+                        .requestMatchers("/auth/**", "/user/util-post/master/list/paging/load", "/user/util-post/language-type/list/load").permitAll() // 공개 경로
                         .anyRequest().authenticated() // 그 외는 인증 필요
                 )
                 .userDetailsService(customUserDetailsService)
