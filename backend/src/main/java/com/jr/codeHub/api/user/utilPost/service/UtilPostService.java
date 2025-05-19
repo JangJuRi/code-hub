@@ -112,7 +112,7 @@ public class UtilPostService {
     }
 
     public ApiResponse loadUtilPostLanguageTypeList() {
-        List<UtilPostLanguageType> languageTypeList = utilPostLanguageTypeRepository.findAll();
+        List<UtilPostLanguageType> languageTypeList = utilPostLanguageTypeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return ApiResponse.ok(languageTypeList);
     }
 

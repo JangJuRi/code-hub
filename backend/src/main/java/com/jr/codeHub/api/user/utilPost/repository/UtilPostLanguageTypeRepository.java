@@ -11,14 +11,16 @@ public interface UtilPostLanguageTypeRepository extends JpaRepository<UtilPostLa
 
     @Query("select upd.utilPostLanguageType" +
            "  from UtilPost upd" +
-           " where upd.utilPostMaster.id = :utilPostMasterId"
+           " where upd.utilPostMaster.id = :utilPostMasterId" +
+           " order by upd.utilPostLanguageType.id"
     )
     List<UtilPostLanguageType> findAllByUtilPostMasterId(Long utilPostMasterId);
 
     @Query("select upd.utilPostLanguageType" +
             "  from UtilPost upd" +
             " where upd.utilPostMaster.id = :utilPostMasterId" +
-            "   and upd.user.id = :userId"
+            "   and upd.user.id = :userId" +
+            " order by upd.utilPostLanguageType.id"
     )
     List<UtilPostLanguageType> findAllByUtilPostMasterIdAndUserId(Long utilPostMasterId, Long userId);
 }
