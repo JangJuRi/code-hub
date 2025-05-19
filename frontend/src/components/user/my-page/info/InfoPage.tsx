@@ -33,7 +33,8 @@ export default function InfoPage({ userId, infoReload } : InfoPageProps) {
         description: '',
         url: '',
         primaryLanguage: {
-            name: ''
+            name: '',
+            color: ''
         }
     }]);
 
@@ -66,6 +67,7 @@ export default function InfoPage({ userId, infoReload } : InfoPageProps) {
                 url: edge.node.url,
                 primaryLanguage: {
                     name: edge.node.primaryLanguage?.name ?? '',
+                    color: edge.node.primaryLanguage?.color ?? '',
                 }
             }));
 
@@ -109,7 +111,8 @@ export default function InfoPage({ userId, infoReload } : InfoPageProps) {
                                     <div className="card h-100 shadow-sm border-0">
                                         <div className="card-body p-3">
                                             <h6 className="card-title fw-bold mb-2 text-truncate">
-                                                <span className="badge bg-secondary me-2">
+                                                <span className="badge me-2"
+                                                      style={{ backgroundColor: repo.primaryLanguage.color }}>
                                                   {repo.primaryLanguage?.name || 'Unknown Language'}
                                                 </span>
                                                 {repo.name}
