@@ -57,8 +57,8 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         CustomUserDetails authUser = (CustomUserDetails) authentication.getPrincipal();
-        String accessToken = jwtUtil.generateAccessToken(authUser.getUsername(), user.getAccountId());
-        String refreshToken = jwtUtil.generateRefreshToken(authUser.getUsername(), user.getAccountId());
+        String accessToken = jwtUtil.generateAccessToken(authUser.getUsername(), user.getAccountId(), loginUser.getRole().getRoleName());
+        String refreshToken = jwtUtil.generateRefreshToken(authUser.getUsername(), user.getAccountId(), loginUser.getRole().getRoleName());
 
         redisUtil.setRedisStringValue("user:" + loginUser.getId(), refreshToken);
 
@@ -129,7 +129,7 @@ public class AuthService {
         User loginUser = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        accessToken = jwtUtil.generateAccessToken(String.valueOf(loginUser.getId()), loginUser.getAccountId());
+        accessToken = jwtUtil.generateAccessToken(String.valueOf(loginUser.getId()), loginUser.getAccountId(), loginUser.getRole().getRoleName());
 
         return ApiResponse.ok(accessToken);
     }

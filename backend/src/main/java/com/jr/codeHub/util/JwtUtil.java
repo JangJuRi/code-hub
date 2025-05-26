@@ -1,13 +1,16 @@
 package com.jr.codeHub.util;
 
+import com.jr.codeHub.api.security.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -17,6 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
     @Value("${jwt-secret-key}")
     private String jwtSecretKey;
@@ -27,6 +31,8 @@ public class JwtUtil {
     @Value("${token.refresh.expired}")
     private long refreshTokenValidTime;
 
+    private final CustomUserDetailsService customUserDetailsService;
+
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     }
@@ -36,20 +42,22 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(String userId, String accountId) {
+    public String generateAccessToken(String userId, String accountId, String roleName) {
         return Jwts.builder()
                 .subject(userId)
                 .claim("accountId", accountId)
+                .claim("role", roleName)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenValidTime))
                 .signWith(getSigningKey()) // SignatureAlgorithm 제거됨
                 .compact();
     }
 
-    public String generateRefreshToken(String userId, String accountId) {
+    public String generateRefreshToken(String userId, String accountId, String roleName) {
         return Jwts.builder()
                 .subject(userId)
                 .claim("accountId", accountId)
+                .claim("role", roleName)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenValidTime))
                 .signWith(getSigningKey()) // SignatureAlgorithm 제거됨
@@ -107,7 +115,8 @@ public class JwtUtil {
                 .getPayload();
 
         String userId = claims.getSubject();
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId);
 
-        return new UsernamePasswordAuthenticationToken(userId, "", Collections.emptyList());
+        return new UsernamePasswordAuthenticationToken(userId, "", userDetails.getAuthorities());
     }
 }

@@ -9,6 +9,7 @@ interface AuthContextType {
     authenticated: boolean;
     loginUserId: number | null;
     loginUserName: string | null;
+    loginUserRole: string | null;
     login: (accessToken: FormData) => void;
     logout: () => void;
     authCheck: () => void;
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [authenticated, setAuthenticated] = useState(false);
     const [loginUserId, setLoginUserId] = useState<number | null>(null);
     const [loginUserName, setLoginUserName] = useState<string | null>(null);
+    const [loginUserRole, setLoginUserRole] = useState<string | null>(null);
 
     useEffect(() => {
         const accessToken = localStorage.getItem("accessToken");
@@ -31,6 +33,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setAuthenticated(true);
                 setLoginUserId(decoded.sub);
                 setLoginUserName(decoded?.accountId || "anonymousUser");
+                setLoginUserRole(decoded?.role);
+
             } catch (error) {
                 console.error("토큰 디코딩 실패", error);
                 logout();
@@ -85,17 +89,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setAuthenticated(true);
             setLoginUserId(decoded.sub);
             setLoginUserName(decoded?.accountId || 'anonymousUser');
+            setLoginUserRole(decoded?.role);
 
         } else {
             localStorage.removeItem("accessToken");
             setAuthenticated(false);
             setLoginUserId(null);
             setLoginUserName(null);
+            setLoginUserRole(null);
         }
     }
 
     return (
-            <AuthContext.Provider value={{ authenticated, loginUserId, loginUserName, login, logout, authCheck }}>
+            <AuthContext.Provider value={{ authenticated, loginUserId, loginUserName, loginUserRole, login, logout, authCheck }}>
                 {children}
             </AuthContext.Provider>
     );

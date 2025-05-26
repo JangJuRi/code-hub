@@ -11,25 +11,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "TABLE_USER")
-public class User extends BaseEntity {
+@Table(name = "TABLE_ROLE")
+public class Role extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private Role role;
-
     @Column(nullable = false)
-    private String userName;
-
-    @Column(nullable = false)
-    private String accountId;
-
-    @Column(nullable = false)
-    private String password;
-
-    private String githubName;
+    private String roleName;
 }

@@ -3,6 +3,7 @@ package com.jr.codeHub.api.security;
 import com.jr.codeHub.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -14,7 +15,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        String roleName = user.getRole().getRoleName();
+
+        return List.of(new SimpleGrantedAuthority(roleName));
     }
 
     @Override
