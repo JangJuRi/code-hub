@@ -35,7 +35,7 @@ export default function Write({ params }: { params: Promise<{ id: string }> }) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        const api = (id === 'new' ? '/user/util-post/master/add' : '/user/util-post/master/modify');
+        const api = (id === 'new' ? '/admin/util-post/master/add' : '/admin/util-post/master/modify');
         const result= await customFetch(api, {
             method: 'POST',
             body: {

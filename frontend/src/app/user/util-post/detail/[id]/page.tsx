@@ -6,8 +6,10 @@ import customFetch from "@/api/customFetch";
 import Link from "next/link";
 import PostCard from "@/components/user/util-post/PostCard";
 import PostModal from "@/components/user/util-post/PostModal";
+import useAuth from "@/hooks/useAuth";
 
 export default function Write({ params }: { params: Promise<{ id: number }> }) {
+    const { loginUserRole } = useAuth();
     const { id } = use(params);
 
     const [title, setTitle] = useState("");
@@ -143,9 +145,11 @@ export default function Write({ params }: { params: Promise<{ id: number }> }) {
                                 ))}
                             </div>
 
-                            <Link className="btn btn-primary" href={`/user/util-post/write/${id}`}>
-                                수정하기
-                            </Link>
+                            { loginUserRole === 'ROLE_ADMIN' &&
+                                <Link className="btn btn-primary" href={`/user/util-post/write/${id}`}>
+                                    수정하기
+                                </Link>
+                            }
                         </div>
 
                         {/* 오른쪽 Monaco Editor (70%) */}

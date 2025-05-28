@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 public class UtilPostController {
     private final UtilPostService utilPostService;
 
-    @PostMapping("/user/util-post/master/add")
+    @PostMapping("/admin/util-post/master/add")
     public ResponseEntity<?> addUtilPostMaster(@RequestBody UtilPostMaster utilPostMaster) {
         return ResponseEntity.ok(utilPostService.addUtilPostMaster(utilPostMaster));
     }
 
-    @PostMapping("/user/util-post/master/modify")
+    @PostMapping("/admin/util-post/master/modify")
     public ResponseEntity<?> modifyUtilPostMaster(@RequestBody UtilPostMaster utilPostMaster) {
         return ResponseEntity.ok(utilPostService.modifyUtilPostMaster(utilPostMaster));
     }

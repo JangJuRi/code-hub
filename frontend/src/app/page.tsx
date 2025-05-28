@@ -6,8 +6,10 @@ import React, {useEffect, useState} from "react";
 import customFetch from "@/api/customFetch";
 import UtilPostCard from "@/components/main/UtilPostCard";
 import Pagination from "@/components/common/Pagination";
+import useAuth from "@/hooks/useAuth";
 
 const Home = () => {
+    const { loginUserRole } = useAuth();
     const [list, setList] = useState([]);
     const [filter, setFilter] = useState({
         text: '',
@@ -51,19 +53,21 @@ const Home = () => {
         <div className="home-container">
             <h1 className="logo">codeHub</h1>
 
-            <SearchBar filter={filter} updateFilter={updateFilter} />
-            <div className="d-flex justify-content-end w-100 px-4">
-                <Link href="/user/util-post/write/new">
-                    <button className="btn btn-primary write-btn mb-3">글쓰기</button>
-                </Link>
-            </div>
+            <SearchBar filter={filter} updateFilter={updateFilter}/>
+            { loginUserRole === 'ROLE_ADMIN' &&
+                <div className="d-flex justify-content-end w-100 px-4">
+                    <Link href="/user/util-post/write/new">
+                        <button className="btn btn-primary write-btn mb-3">글쓰기</button>
+                    </Link>
+                </div>
+            }
             {list.length === 0 ? (
-                <div className="w-100 text-center text-white-50 py-5" style={{ minHeight: "310px" }}>
+                <div className="w-100 text-center text-white-50 py-5 pt-4" style={{ minHeight: "310px" }}>
                     <i className="bi bi-exclamation-circle fs-3 d-block mb-2"></i>
                     <div>게시글이 없습니다</div>
                 </div>
             ) : (
-                <div className="row row-cols-1 row-cols-md-4 g-4 w-100">
+                <div className="row row-cols-1 row-cols-md-4 g-4 w-100 pt-4">
                     {list.map((data, index) => (
                         <UtilPostCard key={index} data={data} />
                     ))}

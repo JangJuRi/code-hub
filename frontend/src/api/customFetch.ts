@@ -35,7 +35,12 @@ const customFetch = async <T>(endpoint: string, options: FetchOptions = {}): Pro
     const response = await fetch(fullUrl, fetchOptions);
 
     if (!response.ok) {
-        throw new Error('네트워크 응답이 올바르지 않습니다');
+        if (response.status === 403) {
+            alert('권한이 없습니다.');
+
+        } else {
+            throw new Error('네트워크 응답이 올바르지 않습니다');
+        }
     }
 
     // 응답 본문이 비어있지 않으면 JSON 파싱
