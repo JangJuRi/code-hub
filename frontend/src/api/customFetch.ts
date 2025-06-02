@@ -60,6 +60,8 @@ const customFetch = async <T>(endpoint: string, options: FetchOptions = {}): Pro
         if (parsedResponse && typeof parsedResponse === 'object' && !Array.isArray(parsedResponse)) {
             if (isApiResponse<T>(parsedResponse)) {
                 return parsedResponse;
+            } else {
+                return {data: parsedResponse, message: "", success: true};
             }
         }
     } catch (e) {
@@ -68,9 +70,9 @@ const customFetch = async <T>(endpoint: string, options: FetchOptions = {}): Pro
 
     if (isApiResponse<T>(textResponse)) {
         return textResponse;
+    } else {
+        return {data: textResponse, message: "", success: true};
     }
-
-    return {data: undefined, message: "", success: false};
 };
 
 const isApiResponse = <T>(obj: any): obj is ApiResponse<T> => {

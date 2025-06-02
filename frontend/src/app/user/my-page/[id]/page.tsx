@@ -75,23 +75,6 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
         }
     }
 
-    const modifyGithubName = async () => {
-        const result = await customFetch(`/user/my-page/github-name/modify`, {
-            method: 'POST',
-            body: {
-                text: modalInput
-            }
-        })
-
-        if (result.success) {
-            setShowModal(false);
-            await loadUserInfo();
-
-        } else {
-            alert(result.message);
-        }
-    }
-
     // 포스트 하위 탭 클릭 시 실행
     const handlePostSubTabClick = (index: number) => {
         setMainTab(1);
@@ -104,7 +87,7 @@ export default function MyPage({ params }: { params: Promise<{ id: number }> }) 
             method: 'GET',
         })
 
-        window.location.href = String(result);
+        window.location.href = String(result.data);
     }
 
     return (
