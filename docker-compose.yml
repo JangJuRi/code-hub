@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   frontend:
+    container_name: frontend
     build: ./frontend
     ports:
       - "3000:3000"
@@ -8,6 +9,7 @@ services:
       - backend
 
   backend:
+    container_name: backend
     build: ./backend
     ports:
       - "8080:8080"
@@ -20,11 +22,24 @@ services:
         condition: service_healthy
 
   redis:
+    container_name: redis
     image: redis:7.0
     ports:
-      - "6378:6379"
+      - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 3s
       retries: 5
+
+  jenkins:
+    container_name: jenkins
+    image: jenkins/jenkins:jdk17
+    ports:
+      - "8888:8080"         # Jenkins 웹 UI
+      - "50000:50000"       # 에이전트 커넥션 포트
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    restart: unless-stopped
+volumes:
+  jenkins_home:
