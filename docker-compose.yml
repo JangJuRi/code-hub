@@ -35,14 +35,14 @@ services:
       timeout: 3s
       retries: 5
 
-  jenkins:
-    container_name: jenkins
-    image: jenkins/jenkins:jdk17
-    ports:
-      - "8888:8080"         # Jenkins 웹 UI
-      - "50000:50000"       # 에이전트 커넥션 포트
-    volumes:
-      - jenkins_home:/var/jenkins_home
-    restart: unless-stopped
-volumes:
-  jenkins_home:
+#  jenkins:
+#    container_name: jenkins
+#    image: jenkins/jenkins:jdk17
+#    ports:
+#      - "8888:8080"         # Jenkins 웹 UI
+#      - "50000:50000"       # 에이전트 커넥션 포트
+#    volumes:
+#      - jenkins_home:/var/jenkins_home
+#    restart: unless-stopped
+#volumes:
+#  jenkins_home:
