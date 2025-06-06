@@ -22,7 +22,7 @@ services:
       - SPRING_REDIS_PORT=6379
     volumes:
       - /home/ec2-user/config/code-hub/application.properties:/app/config/application.properties
-    command: ["java", "-jar", "app.jar", "--spring.config.location=classpath:/,file:/app/config/application.properties"]
+    command: [ "java", "-jar", "app.jar", "--spring.config.location=file:/app/config/application.properties" ]
     depends_on:
       redis:
         condition: service_healthy
