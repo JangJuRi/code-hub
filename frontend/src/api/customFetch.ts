@@ -25,6 +25,8 @@ const customFetch = async <T>(endpoint: string, options: FetchOptions = {}): Pro
         ? `${process.env.NEXT_PUBLIC_API_URL}${endpoint}?${queryString}`
         : `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`;
 
+    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
     const fetchOptions: RequestInit = {
         method, // 기본값은 'GET'
         headers: {
