@@ -17,8 +17,8 @@ public interface UtilPostMasterRepository extends JpaRepository<UtilPostMaster, 
                    "       upm.id" +
                    "     , upm.title" +
                    "     , upm.description" +
-                   "     , STRING_AGG(uplt.language_type, ',') as language_type" +
-                   "     , STRING_AGG(uplt.color, ',') as color" +
+                   "     , COALESCE(STRING_AGG(uplt.language_type, ','), '') as language_type" +
+                   "     , COALESCE(STRING_AGG(uplt.color, ','), '') as color" +
                    "     , u.user_name" +
                    "  from TABLE_UTIL_POST_MASTER upm" +
                    " inner join TABLE_USER u on upm.user_id = u.id" +
