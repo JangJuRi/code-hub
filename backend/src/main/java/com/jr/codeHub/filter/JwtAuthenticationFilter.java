@@ -26,6 +26,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Set<String> WHITE_LIST = Set.of(
             "/user/util-post/master/list/paging/load",
             "/user/util-post/language-type/list/load",
+            "/v3/api-docs/**",
+            "/swagger-ui/",
+            "/swagger-ui.html",
             "/auth/"
     );
 

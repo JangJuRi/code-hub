@@ -1,5 +1,6 @@
 package com.jr.codeHub.api.auth.controller;
 
+import com.jr.codeHub.api.auth.dto.LoginDto;
 import com.jr.codeHub.api.auth.service.AuthService;
 import com.jr.codeHub.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +20,8 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(HttpServletResponse response, @ModelAttribute User user) {
-        return ResponseEntity.ok(authService.login(response, user));
+    public ResponseEntity<?> login(HttpServletResponse response, @RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok(authService.login(response, loginDto));
     }
 
     @PostMapping("/auth/logout")

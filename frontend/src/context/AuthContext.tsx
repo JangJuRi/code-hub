@@ -10,7 +10,7 @@ interface AuthContextType {
     loginUserId: number | null;
     loginUserName: string | null;
     loginUserRole: string | null;
-    login: (accessToken: FormData) => void;
+    login: (accountId: string, password:string) => void;
     logout: () => void;
     authCheck: () => void;
 }
@@ -42,10 +42,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
-    const login = async (formData: FormData) => {
+    const login = async (accountId: string, password:string) => {
         const result = await customFetch('/auth/login', {
             method: 'POST',
-            body: formData
+            body: {
+                accountId: accountId,
+                password: password
+            }
         })
 
         if (result.success) {

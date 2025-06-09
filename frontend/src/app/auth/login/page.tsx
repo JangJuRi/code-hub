@@ -18,11 +18,7 @@ export default function Register() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append("accountId", form.accountId);
-        formData.append("password", form.password);
-
-        login(formData);
+        login(form.accountId, form.password);
     };
 
     return (

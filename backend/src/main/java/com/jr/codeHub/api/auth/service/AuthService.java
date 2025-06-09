@@ -1,5 +1,6 @@
 package com.jr.codeHub.api.auth.service;
 
+import com.jr.codeHub.api.auth.dto.LoginDto;
 import com.jr.codeHub.api.auth.repository.RefreshTokenRepository;
 import com.jr.codeHub.entity.RefreshToken;
 import com.jr.codeHub.util.*;
@@ -43,22 +44,22 @@ public class AuthService {
         return ApiResponse.ok(null);
     }
 
-    public ApiResponse login(HttpServletResponse response, User user) {
-        User loginUser = userRepository.findUserByAccountId(user.getAccountId());
+    public ApiResponse login(HttpServletResponse response, LoginDto loginDto) {
+        User loginUser = userRepository.findUserByAccountId(loginDto.getAccountId());
 
-        if (loginUser == null || !CommonUtil.matches(user.getPassword(), loginUser.getPassword())) {
+        if (loginUser == null || !CommonUtil.matches(loginDto.getPassword(), loginUser.getPassword())) {
             return ApiResponse.fail("계정 정보를 확인해주세요.", null);
         }
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUser.getId(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(loginUser.getId(), loginDto.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         CustomUserDetails authUser = (CustomUserDetails) authentication.getPrincipal();
-        String accessToken = jwtUtil.generateAccessToken(authUser.getUsername(), user.getAccountId(), loginUser.getRole().getRoleName());
-        String refreshToken = jwtUtil.generateRefreshToken(authUser.getUsername(), user.getAccountId(), loginUser.getRole().getRoleName());
+        String accessToken = jwtUtil.generateAccessToken(authUser.getUsername(), loginDto.getAccountId(), loginUser.getRole().getRoleName());
+        String refreshToken = jwtUtil.generateRefreshToken(authUser.getUsername(), loginDto.getAccountId(), loginUser.getRole().getRoleName());
 
         redisUtil.setRedisStringValue("user:" + loginUser.getId(), refreshToken);
 
