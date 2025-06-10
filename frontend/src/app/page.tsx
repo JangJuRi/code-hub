@@ -67,7 +67,7 @@ const Home = () => {
                     <div>게시글이 없습니다</div>
                 </div>
             ) : (
-                <div className="row row-cols-1 row-cols-md-4 g-4 w-100 pt-4">
+                <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 w-100 pt-4">
                     {list.map((data, index) => (
                         <UtilPostCard key={index} data={data} />
                     ))}
