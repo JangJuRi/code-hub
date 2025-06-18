@@ -61,17 +61,11 @@ public class AuthService {
         String accessToken = jwtUtil.generateAccessToken(authUser.getUsername(), loginDto.getAccountId(), loginUser.getRole().getRoleName());
         String refreshToken = jwtUtil.generateRefreshToken(authUser.getUsername(), loginDto.getAccountId(), loginUser.getRole().getRoleName());
 
+        // redis에 refreshToken 저장
         redisUtil.setRedisStringValue("user:" + loginUser.getId(), refreshToken);
 
         // HttpOnly 쿠키에 refreshToken 저장
         ResponseCookie cookie = cookieUtil.setHttpOnlyCookie("refreshToken", refreshToken, Duration.ofDays(7));
-
-        // db에 refreshToken 저장
-        RefreshToken refreshTokenEntity = refreshTokenRepository.findById(loginUser.getId())
-                .orElseGet(RefreshToken::new);
-        refreshTokenEntity.setToken(refreshToken);
-        refreshTokenEntity.setUser(loginUser);
-        refreshTokenRepository.save(refreshTokenEntity);
 
         response.addHeader("Set-Cookie", cookie.toString());
 
@@ -116,10 +110,9 @@ public class AuthService {
         }
 
         String userId = claims.getSubject();
-        RefreshToken dbRefreshToken = refreshTokenRepository.findByUserId(Long.valueOf(userId));
-        String dbRefreshTokenValue = dbRefreshToken.getToken();
+        String storedRefreshToken = redisUtil.getRedisStringValue("user:" + userId);
 
-        if (!refreshToken.equals(dbRefreshTokenValue)) {
+        if ("".equals(storedRefreshToken) || !refreshToken.equals(storedRefreshToken)) {
             return ApiResponse.fail("Refresh Token이 유효하지 않습니다.", null);
         }
 
