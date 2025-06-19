@@ -1,8 +1,6 @@
 package com.jr.codeHub.api.auth.service;
 
 import com.jr.codeHub.api.auth.dto.LoginDto;
-import com.jr.codeHub.api.auth.repository.RefreshTokenRepository;
-import com.jr.codeHub.entity.RefreshToken;
 import com.jr.codeHub.util.*;
 import com.jr.codeHub.api.security.CustomUserDetails;
 import com.jr.codeHub.api.user.user.repository.UserRepository;
@@ -26,7 +24,6 @@ import java.time.Duration;
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final RedisUtil redisUtil;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
@@ -85,9 +82,6 @@ public class AuthService {
 
         // refreshToken 쿠키 삭제
         cookieUtil.removeRefreshTokenCookie(request, "refreshToken");
-
-        // refreshToken db 삭제
-        refreshTokenRepository.deleteByUserId(Long.valueOf(userId));
 
         return ApiResponse.ok(null);
     }
